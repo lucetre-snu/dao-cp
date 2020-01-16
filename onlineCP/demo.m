@@ -13,16 +13,38 @@
 % Batch Hot uses the previous result as the initialization to ALS
 
 clc;clear;close all;
-addpath(genpath('.'));
+addpath(genpath('../'));
 
 %% generate data
 dims = [20, 20, 20, 200];
-N = length(dims)
-tao = round(0.2*dims(end))
-TT = dims(end)-tao
-R = 5
-X = generateData(dims, R, 20);
-size(X)
+N = length(dims);
+tao = round(0.2*dims(end));
+TT = dims(end)-tao;
+R = 5;
+% X = generateData(dims, R, 20);
+% save X.mat X
+
+size_tens = [10 20 30];
+T = randn(size_tens);
+whos T;
+
+size_tens = [10 20 30];
+R = 4;
+U = cpd_rnd(size_tens,R);
+T = cpdgen(U);
+
+whos U T;
+opt.TolX = 1e-8;
+opt.MaxIter = 100;
+% out = cpd(T, R);
+% whos out.U;
+
+
+
+input('test tensorlab');
+
+disp('>> X loading');
+load X.mat;
 whos X
 
 %% initialization
@@ -43,16 +65,19 @@ initAs{end} = initAs{end}*diag(estInitX.lambda);
 % initilize each algorithm
 % batch 
 batchHotAs = initAs;
-
 % initialize onlineCP method
 [onlinePs, onlineQs] = onlineCP_initial(initX, initAs, R);
 onlineAs = initAs(1:end-1);
-onlineAs_N = initAs{end}
+onlineAs_N = initAs{end};
+for i = tao-5:tao
+    printf('(%d)\t', i); 
+    disp(onlineAs_N(i,:));
+end
 
 %% adding new data
 minibatchSize = 1;
 k = 1;
-
+TT = 5;
 for t=1:minibatchSize:TT
     fprintf('the %dth steps\n', k);
     % get the incoming slice
@@ -65,15 +90,30 @@ for t=1:minibatchSize:TT
     idx(end) = {1:endTime};
     Xt = X(idx{:});
 
-    % cold batch
+    % cp-als using tensor box
     batchColdOpt.printitn = 0;
     tic;
     batchColdXt = cp_als(tensor(Xt), R, batchColdOpt);
+    batchColdAs = batchColdXt.U;
+    % absorb lambda into the last dimension
+    batchColdAs{end} = batchColdAs{end}*diag(batchColdXt.lambda);
+    batchColdAs_N = batchColdAs{end};
     runtime = toc;
     time(1, k) = runtime;
-    fitness(1, k) = 1-(norm(tensor(Xt)-full(batchColdXt))/norm(tensor(Xt)));
+
+    % cp-als using tensor box
+    batchColdOpt.printitn = 0;
+    tic;
+    batchColdXt = cp_als(tensor(Xt), R, batchColdOpt);
+    batchColdAs = batchColdXt.U;
+    % absorb lambda into the last dimension
+    batchColdAs{end} = batchColdAs{end}*diag(batchColdXt.lambda);
+    batchColdAs_N = batchColdAs{end};
+    runtime = toc;
+    time(1, k) = runtime;
+    % fitness(1, k) = 1-(norm(tensor(Xt)-full(batchColdXt))/norm(tensor(Xt)));
 %     (norm(tensor(Xt)-full(batchColdXt))/norm(tensor(Xt)))
-    diff_cold = norm(tensor(Xt)-full(batchColdXt))
+    % diff_cold = norm(tensor(Xt)-full(batchColdXt))
 %     % hot batch
 %     tic;
 %     % estimate the projection of new data on the time mode
@@ -95,10 +135,18 @@ for t=1:minibatchSize:TT
     onlineAs_N(end+1,:) = onlineAlpha;
     runtime = toc;
     tmp = [onlineAs; {onlineAs_N}];
+    for i = tao-5:tao+t
+        printf('cp-als : (%d)\t', i); 
+        disp(batchColdAs_N(i,:));
+        printf('onl-CP : (%d)\t', i); 
+        disp(onlineAs_N(i,:));
+    end
     time(3, k) = runtime;
-    fitness(3, k) = 1-(norm(tensor(Xt)-full(ktensor(tmp)))/norm(tensor(Xt)));
-    diff_onlineCP = (norm(tensor(Xt)-full(ktensor(tmp))))
-    disp(diff_onlineCP - diff_cold);
+    % fitness(3, k) = 1-(norm(tensor(Xt)-full(ktensor(tmp)))/norm(tensor(Xt)));
+    % diff_onlineCP = (norm(tensor(Xt)-full(ktensor(tmp))))
+    % disp(diff_onlineCP - diff_cold);
+
+    input('');
     k = k+1;
 end
 
