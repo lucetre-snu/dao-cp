@@ -28,24 +28,17 @@ size_tens = [10 20 30];
 T = randn(size_tens);
 whos T;
 
-size_tens = [10 20 30];
-R = 4;
-U = cpd_rnd(size_tens,R);
-T = cpdgen(U);
-
-whos U T;
-opt.TolX = 1e-8;
-opt.MaxIter = 100;
-% out = cpd(T, R);
-% whos out.U;
-
-
-
-input('test tensorlab');
 
 disp('>> X loading');
 load X.mat;
 whos X
+
+Uest = cpd(X,R,'Algorithm',@cpd_als);
+Uest_N = Uest{end};
+for i = tao-5:tao
+    fprintf('(%d)\t', i); 
+    disp(Uest_N(i,:));
+end
 
 %% initialization
 % get initX
@@ -70,7 +63,7 @@ batchHotAs = initAs;
 onlineAs = initAs(1:end-1);
 onlineAs_N = initAs{end};
 for i = tao-5:tao
-    printf('(%d)\t', i); 
+    fprintf('(%d)\t', i); 
     disp(onlineAs_N(i,:));
 end
 
@@ -89,6 +82,10 @@ for t=1:minibatchSize:TT
     % get tensor X of time current time
     idx(end) = {1:endTime};
     Xt = X(idx{:});
+
+
+    Ut = cpd(Xt,R,'Algorithm',@cpd_als);
+    Ut_N = Uest{end};
 
     % cp-als using tensor box
     batchColdOpt.printitn = 0;
@@ -136,10 +133,12 @@ for t=1:minibatchSize:TT
     runtime = toc;
     tmp = [onlineAs; {onlineAs_N}];
     for i = tao-5:tao+t
-        printf('cp-als : (%d)\t', i); 
-        disp(batchColdAs_N(i,:));
-        printf('onl-CP : (%d)\t', i); 
-        disp(onlineAs_N(i,:));
+        fprintf('tenlab : (%d)\t', i); 
+        disp(Ut_N(i,:));
+        % fprintf('tenbox : (%d)\t', i); 
+        % disp(batchColdAs_N(i,:));
+        % fprintf('onl-CP : (%d)\t', i); 
+        % disp(onlineAs_N(i,:));
     end
     time(3, k) = runtime;
     % fitness(3, k) = 1-(norm(tensor(Xt)-full(ktensor(tmp)))/norm(tensor(Xt)));
