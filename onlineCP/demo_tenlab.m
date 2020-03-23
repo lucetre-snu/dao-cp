@@ -60,7 +60,7 @@ end
 minibatchSize = 1;
 k = 1;
 for t=1:minibatchSize:20
-    % fprintf('the %dth steps\n', k);
+    fprintf('the %dth steps\n', k);
     % get the incoming slice
     endTime = min(tao+t+minibatchSize-1, dims(end));
     idx(end) = {tao+t:endTime};
@@ -71,34 +71,48 @@ for t=1:minibatchSize:20
     idx(end) = {1:endTime};
     Xt = X(idx{:});
 
+
+
+
+    % tensorlab
     tic;
     Ut = cpd(Xt,R,'Algorithm',@cpd_als);
+    Ut_N = Ut{end};
     runtime(1, k) = toc;
     normErr(1, k) = frob(Xt - cpdgen(Ut));
     fitness(1, k) = 1-normErr(1, k)/norm(tensor(Xt));
+
+    % % tensor toolbox
+    % batchColdOpt.printitn = 0;
+    % tic;
+    % batchColdXt = cp_als(tensor(Xt), R, batchColdOpt);
+    % runtime(2, k) = toc;
+    % normErr(2, k) = norm(tensor(Xt)-full(batchColdXt));
+    % fitness(2, k) = 1-normErr(2, k)/norm(tensor(Xt));
 
     % online CP
     tic;
     [onlineAs, onlinePs, onlineQs, onlineAlpha] = onlineCP_update(x, onlineAs, onlinePs, onlineQs);
     onlineAs_N(end+1,:) = onlineAlpha;
     tmp = [onlineAs'; {onlineAs_N}];
-    runtime(2, k) = toc;
-    normErr(2, k) = norm(tensor(Xt)-full(ktensor(tmp)));
-    fitness(2, k) = 1-normErr(2, k)/norm(tensor(Xt));
-    % for i = tao-5:tao+t
-    %     fprintf('tenlab : (%d)\t', i); 
-    %     disp(Ut_N(i,:));
-    %     fprintf('onl-CP : (%d)\t', i); 
-    %     disp(onlineAs_N(i,:));
-    % end
+    runtime(3, k) = toc;
+    normErr(3, k) = norm(tensor(Xt)-full(ktensor(tmp)));
+    fitness(3, k) = 1-normErr(3, k)/norm(tensor(Xt));
+    for i = tao-5:tao+t
+        fprintf('tenlab : (%d)\t', i); 
+        disp(Ut_N(i,:));
+        fprintf('onl-CP : (%d)\t', i); 
+        disp(onlineAs_N(i,:));
+    end
     k = k+1;
-    % input('');
+    input('');
 end
 
-whos onlineAs onlineAs_N;
-runtime(3,:) = runtime(1,:) - runtime(2,:);
-fitness(3,:) = fitness(1,:) - fitness(2,:);
-normErr(3,:) = normErr(1,:) - normErr(2,:);
+% whos onlineAs onlineAs_N;
+
+runtime(end+1:end+2,:) = runtime(1:2,:) - runtime(end,:);
+fitness(end+1:end+2,:) = fitness(1:2,:) - fitness(end,:);
+normErr(end+1:end+2,:) = normErr(1:2,:) - normErr(end,:);
 disp(runtime');
 disp(fitness');
 disp(normErr');
