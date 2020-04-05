@@ -1,4 +1,4 @@
-
+% scp lucetre@gogh.snu.ac.kr:/usr0/DATA/TENSOR/sample-video/video.tensor .
 addpath('tensorlab_2016-03-28');
 warning('off','all');
 
