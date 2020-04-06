@@ -6,12 +6,12 @@ warning('off', 'all');
 
 currentPath = fileparts(mfilename('fullpath'));
 videoTensor = [];
-R = 10;
+R = 20;
 dims = [205 180 320 3];
 numOfFrames = dims(1);
 iterFrame = 5;
-% N = numOfFrames / iterFrame;
-N = 1;
+N = numOfFrames / iterFrame;
+% N = 1;
 videoTensor = NaN(dims);
 
 for i = 1:N
@@ -28,7 +28,6 @@ for i = 1:N
     fclose(tensorFile);
 
     for j = 1:iterFrame
-    % for j = 1:1
         frame = (i-1)*iterFrame + j;
         T = videoTensor(1:frame, :, :, :);
         whos T
