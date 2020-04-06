@@ -6,7 +6,7 @@ warning('off', 'all');
 
 currentPath = fileparts(mfilename('fullpath'));
 videoTensor = [];
-R = 5;
+R = 10;
 dims = [205 180 320 3];
 numOfFrames = dims(1);
 iterFrame = 5;
@@ -21,7 +21,7 @@ for i = 1:N
 
     X = fscanf(tensorFile, "%d %d %d %d %d", [5, inf]);
     for row = X
-        if row(2) > 30 & row(2) < 210
+        if row(2) > 30 & row(2) <= 210
             videoTensor(row(1), row(2)-30, row(3), row(4)) = row(5);
         end
     end
@@ -32,12 +32,16 @@ for i = 1:N
         frame = (i-1)*iterFrame + j;
         T = videoTensor(1:frame, :, :, :);
         whos T
-
-        options.Display = false;
-        options.Algorithm = @cpd_als;
+        options.Display = true; % Show progress on the command line.
+        options.Initialization = @cpd_rnd; % Select pseudorandom initialization.
+        options.Algorithm = @cpd_als; % Select ALS as the main algorithm.
+        options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
+        options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
+        options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
         options.Refinement = false;
+        options.incomplete = false;
         % options.TolX = 1e-12;
-        Uest = cpd(T, R, options);
+        Uest = cpd(fmt(T), R, options);
         whos Uest
         Test = cpdgen(Uest);
 
