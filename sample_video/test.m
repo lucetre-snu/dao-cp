@@ -44,8 +44,8 @@ for i = 1:N
         whos Uest
         Test = cpdgen(Uest);
 
-        imwrite(uint8(squeeze(T(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_org.jpg'));
-        imwrite(uint8(squeeze(Test(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_est.jpg'));
+        % imwrite(uint8(squeeze(T(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_org.jpg'));
+        imwrite(uint8(squeeze(Test(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_est', num2str(R), '.jpg'));
 
     end
 end
