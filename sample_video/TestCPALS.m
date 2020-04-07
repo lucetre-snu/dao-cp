@@ -6,7 +6,7 @@ warning('off', 'all');
 
 currentPath = fileparts(mfilename('fullpath'));
 videoTensor = [];
-R = 20;
+R = 30;
 dims = [205 180 320 3];
 numOfFrames = dims(1);
 iterFrame = 5;
@@ -26,9 +26,41 @@ for i = 1:N
         end
     end
     fclose(tensorFile);
+    toc;
+end
 
-    for j = 1:iterFrame
-        frame = (i-1)*iterFrame + j;
+
+% T = videoTensor(:, :, :, :);
+% whos T
+% options.Display = true; % Show progress on the command line.
+% options.Initialization = @cpd_rnd; % Select pseudorandom initialization.
+% options.Algorithm = @cpd_als; % Select ALS as the main algorithm.
+% options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
+% options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
+% options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
+% options.Refinement = false;
+% options.incomplete = false;
+% Uest = cpd(T, R, options);
+% whos Uest
+% Test = cpdgen(Uest);
+for R = 25:5:30
+    filename = strcat('./video_frame/CPALS', num2str(R));
+    mkdir(filename);
+    outputVideoName = strcat(filename, '/video_est.mp4');
+    % outputVideoName = strcat('video_org.mp4');
+    outputVideo = VideoWriter(outputVideoName,'MPEG-4');
+    outputVideo.FrameRate = 30;
+
+    open(outputVideo);
+
+    % for frame = 1:numOfFrames    
+    %     img = uint8(squeeze(Test(frame, :, :, :)));
+    %     writeVideo(outputVideo,img);
+    %     imwrite(img, strcat(filename, '/video_frame', num2str(frame), '.jpg'));
+    % end
+
+    for frame = 1:numOfFrames
+        disp(frame);
         T = videoTensor(1:frame, :, :, :);
         whos T
         options.Display = true; % Show progress on the command line.
@@ -39,13 +71,13 @@ for i = 1:N
         options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
         options.Refinement = false;
         options.incomplete = false;
-        % options.TolX = 1e-12;
-        Uest = cpd(fmt(T), R, options);
+        Uest = cpd(T, R, options);
         whos Uest
         Test = cpdgen(Uest);
 
-        % imwrite(uint8(squeeze(T(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_org.jpg'));
-        imwrite(uint8(squeeze(Test(frame, :, :, :))), strcat('./video_frame/video_frame', num2str(frame), '_est', num2str(R), '.jpg'));
-
+        img = uint8(squeeze(Test(frame, :, :, :)));
+        writeVideo(outputVideo,img);
+        imwrite(img, strcat(filename, '/video_frame', num2str(frame), '.jpg'));
     end
+    close(outputVideo);
 end
