@@ -58,6 +58,19 @@ end
 toc;
 
 
+% minibatchSize = 1;
+% k = 1;
+% for frame = 1:numOfFrames
+%     fprintf('the %dth steps\n', k);
+%     % get the incoming slice
+%     endTime = min(tao+t+minibatchSize-1, dims(end));
+%     idx(end) = {tao+t:endTime};
+    
+%     x = squeeze(X(idx{:}));
+%     numOfSlice = endTime-tao-t+1;
+%     % get tensor X of time current time
+%     idx(end) = {1:endTime};
+%     Xt = X(idx{:});
 
 for frame = 1:numOfFrames
     T = videoTensor(1:frame, :, :, :);
