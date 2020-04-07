@@ -1,4 +1,5 @@
 addpath('../tensorlab_2016-03-28');
+addpath('../tensor_toolbox-v3.1');
 addpath('../onlineCP');
 warning('off', 'all');
 
@@ -33,15 +34,23 @@ end
 tic;
 initX = videoTensor(1:5, :, :, :);
 
-initUA = cpd(initX, R, 'Algorithm', @cpd_als);
+options.Display = true; % Show progress on the command line.
+options.Initialization = @cpd_rnd; % Select pseudorandom initialization.
+options.Algorithm = @cpd_als; % Select ALS as the main algorithm.
+options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
+options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
+options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
+options.Refinement = false;
+initAs = cpd(initX, R, options);
 
+whos initX initAs
 toc;
 
 % initialize onlineCP method
 [onlinePs, onlineQs] = onlineCP_initial_tenlab(initX, initAs, R);
 onlineAs = initAs(1:end-1);
 onlineAs_N = initAs{end};
-for i = tao-5:tao
+for i = 1:3
     fprintf('>> onlineAs_N(%d) ', i); 
     disp(onlineAs_N(i,:));
 end
@@ -61,8 +70,7 @@ for frame = 1:numOfFrames
     options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
     options.Refinement = false;
     options.incomplete = false;
-    % options.TolX = 1e-12;
-    Uest = cpd(fmt(T), R, options);
+    Uest = cpd(T, R, options);
     whos Uest
     Test = cpdgen(Uest);
 
