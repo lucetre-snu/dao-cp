@@ -9,7 +9,11 @@ videoTensor = [];
 R = 30;
 dims = [205 180 320 3];
 numOfFrames = dims(1);
+tao = 100;
+% numOfFrames = 10;
+% tao = 5;
 iterFrame = 5;
+
 N = numOfFrames / iterFrame;
 % N = 1;
 videoTensor = NaN(dims);
@@ -43,14 +47,13 @@ end
 % Uest = cpd(T, R, options);
 % whos Uest
 % Test = cpdgen(Uest);
-for R = 25:5:30
+for R = 5:5:20
     filename = strcat('./video_frame/CPALS', num2str(R));
     mkdir(filename);
     outputVideoName = strcat(filename, '/video_est.mp4');
     % outputVideoName = strcat('video_org.mp4');
     outputVideo = VideoWriter(outputVideoName,'MPEG-4');
     outputVideo.FrameRate = 30;
-
     open(outputVideo);
 
     % for frame = 1:numOfFrames    
@@ -59,8 +62,11 @@ for R = 25:5:30
     %     imwrite(img, strcat(filename, '/video_frame', num2str(frame), '.jpg'));
     % end
 
-    for frame = 1:numOfFrames
+    minibatchSize = 1;
+    for t = 1:minibatchSize:numOfFrames-tao
+        frame = tao+t;
         disp(frame);
+        tic;
         T = videoTensor(1:frame, :, :, :);
         whos T
         options.Display = true; % Show progress on the command line.
@@ -72,12 +78,18 @@ for R = 25:5:30
         options.Refinement = false;
         options.incomplete = false;
         Uest = cpd(T, R, options);
-        whos Uest
+        % whos Uest
         Test = cpdgen(Uest);
+
+        testRuntime(t) = toc;
+        testNormErr(t) = frob(Test-T);
+        testFitness(t) = 1-testNormErr(t)/frob(T);
 
         img = uint8(squeeze(Test(frame, :, :, :)));
         writeVideo(outputVideo,img);
         imwrite(img, strcat(filename, '/video_frame', num2str(frame), '.jpg'));
     end
     close(outputVideo);
+
+    testRuntime_Fitness = [testRuntime', testFitness']
 end
