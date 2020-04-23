@@ -45,6 +45,13 @@ for i = startFrame/iterFrame+1:endFrame/iterFrame+1
 end
 
 for frame = 1:numOfFrames
+    if frame == drasticFrame - startFrame
+        img = imread(strcat('OPT/opt.png'));
+        writeVideo(outputVideo,img);
+        writeVideo(outputVideo,img);
+        writeVideo(outputVideo,img);
+        writeVideo(outputVideo,img);
+    end
     img = uint8(squeeze(videoTensor(:, :, :, frame)));
     writeVideo(outputVideo,img);
 end
