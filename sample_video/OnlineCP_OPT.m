@@ -18,6 +18,10 @@ iterFrame = 5;
 N = numOfFrames / iterFrame;
 videoTensor = NaN(dims);
 
+outputVideo = VideoWriter('test');
+outputVideo.FrameRate = 30 * 0.25;
+open(outputVideo);
+
 for i = 1:N
     tensorFile = fopen(strcat(currentPath, '/video', num2str(i-1), '.tensor'), 'r');
     disp(i);
@@ -70,13 +74,25 @@ for t = 1:minibatchSize:numOfFrames-tao
     onlineAs_N(end+1,:) = onlineAlpha;
     Uest = [onlineAs'; {onlineAs_N}];
 
-    disp(onlineAs_N)
+    As1 = Uest{1};
+    As2 = Uest{2};
+    As3 = Uest{3};
+    As4 = Uest{4};
+    [As1(1:3,1), As2(1:3,1), As3(1:3,1)]
+
     Test = cpdgen(Uest);
     testRuntime(t) = toc;
     testNormErr(t) = frob(Test-Xt);
-    testFitness(t) = 1-testNormErr(t)/frob(Xt);
-
-    % Test = permute(cpdgen(Uest), [4 1 2 3]);
+    testFitness(t) = (1-testNormErr(t)/frob(Xt))*100;
+    toc;
+    Test = permute(cpdgen(Uest), [4 1 2 3]);
+    img = uint8(squeeze(Test(frame, :, :, :)));
+    writeVideo(outputVideo,img);
 end
+close(outputVideo);
+
+whos As1 As2 As3 As4
+[Uest{1}(:,1)', Uest{2}(:,1)' Uest{3}(:,1)', Uest{4}(:,1)'];
+disp(onlineAs_N(:,1:3))
 
 testRuntime_Fitness = [testRuntime', testFitness']
