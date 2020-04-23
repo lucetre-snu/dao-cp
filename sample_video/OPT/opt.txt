@@ -1,0 +1,77 @@
+opt1
+
+                                +----------------------------------------------+
+                                |                                              |
+                                |                                              |
+                                |                OPTIMIZATION 1                |
+                                |                                              |
+                                |                                              |
+                                |   Frame 115~120 CP-ALS init                  |
+                                |   Frame 121~140 OnlineCP (mini-batch: 1)     |
+                                |                                              |
+                                |                                              |
+                                |                                              |
+                                +----------------------------------------------+
+
+
+opt2: for high accuracy in cp-als
+
+                                +----------------------------------------------+
+                                |                                              |
+                                |                                              |
+                                |                OPTIMIZATION 2                |
+                                |                                              |
+                                |                                              |
+                                |   Frame 115~120 CP-ALS init                  |
+                                |   Frame 121~140 CP-ALS                       |
+                                |                                              |
+                                |                                              |
+                                |                                              |
+                                +----------------------------------------------+
+
+
+opt3
+
+                                +----------------------------------------------+
+                                |                                              |
+                                |                                              |
+                                |                OPTIMIZATION 3                |
+                                |                                              |
+                                |                                              |
+                                |   Frame 115~120 CP-ALS init                  |
+                                |   Frame 121~127 CP-ALS                       |
+                                |   Frame 128~140 OnlineCP (mini-batch: 1)     |
+                                |                                              |
+                                |                                              |
+                                +----------------------------------------------+
+
+
+opt4: for importance in updating temporal mode in drastic moment
+
+                                +----------------------------------------------+
+                                |                                              |
+                                |                                              |
+                                |                OPTIMIZATION 4                |
+                                |                                              |
+                                |                                              |
+                                |   Frame 115~120 CP-ALS init                  |
+                                |   Frame 121~126 CP-ALS                       |
+                                |   Frame 127~140 OnlineCP (mini-batch: 1)     |
+                                |                                              |
+                                |                                              |
+                                +----------------------------------------------+
+
+opt5
+
+                                +----------------------------------------------+
+                                |                                              |
+                                |                                              |
+                                |                OPTIMIZATION 5                |
+                                |                                              |
+                                |   Frame 115~120 CP-ALS init                  |
+                                |   Frame 121~127 OnlineCP (mini-batch: 1)     |
+                                |   Frame 127     CP-ALS                       |
+                                |   Frame 128~140 OnlineCP (mini-batch: 1)     |
+                                |                                              |
+                                |                                              |
+                                +----------------------------------------------+
