@@ -219,7 +219,6 @@ elseif opt == 3
         img = uint8(squeeze(Test(frame, :, :, :)));
         writeVideo(outputVideo,img);
     end
-end
 elseif opt == 4
     % tic;
     newTao = drasticFrame - startFrame-1;
@@ -293,4 +292,7 @@ elseif opt == 4
 end
 
 close(outputVideo);
+fileID = fopen(strcat('OPT/opt', num2str(opt),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testFitness']
+fprintf(fileID, "%d\t%.4f\t%.4f%%\n", testRuntime_Fitness');
+fclose(fileID);
