@@ -45,7 +45,7 @@ for i = startFrame/iterFrame+1:endFrame/iterFrame+1
 end
 
 for frame = 1:numOfFrames
-    if frame == drasticFrame - startFrame
+    if frame == tao
         img = imread(strcat('OPT/opt.png'));
         writeVideo(outputVideo,img);
         writeVideo(outputVideo,img);
