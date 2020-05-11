@@ -24,7 +24,7 @@ tao = 5;
 dims = [180 320 3 205];
 iterFrame = 5;
 videoTensor = NaN(dims);
-frameRate = 30 * 0.1;
+frameRate = 30 * 0.2;
 minibatchSize = 1;
 
 outputVideo = VideoWriter('OPT/org');
@@ -50,7 +50,7 @@ for frame = 1:numOfFrames
 end
 close(outputVideo);
 
-outputVideo = VideoWriter(strcat('OPT/opt', num2str(opt)));
+outputVideo = VideoWriter('OPT/trigger');
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
