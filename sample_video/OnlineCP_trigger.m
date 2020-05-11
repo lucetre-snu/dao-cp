@@ -13,11 +13,11 @@ options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
 R = 10;
-threshold = 1.5;
+threshold = 15;
 
 % OnlineCP w. trigger in full video
 
-startFrame = 190;
+startFrame = 180;
 endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
@@ -47,7 +47,7 @@ outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
 for i = startFrame/iterFrame:endFrame/iterFrame-1
-    tensorFile = fopen(strcat(currentPath, '/video', num2str(i), '.tensor'), 'r');
+    tensorFile = fopen(strcat(currentPath, '/data/video', num2str(i), '.tensor'), 'r');
     tic;
     X = fscanf(tensorFile, "%d %d %d %d %d", [5, inf]);
     for row = X
