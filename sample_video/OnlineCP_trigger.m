@@ -13,26 +13,41 @@ options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
 R = 10;
+threshold = 1.5;
 
 % OnlineCP w. trigger in full video
 
-startFrame = 115
-endFrame = 140;
+startFrame = 190;
+endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
 tao = 5;
 dims = [180 320 3 205];
 iterFrame = 5;
 videoTensor = NaN(dims);
-frameRate = 30 * 0.2;
+frameRate = 30 * 0.3;
 minibatchSize = 1;
+
+outputVideo = VideoWriter('OPT/title');
+outputVideo.FrameRate = frameRate;
+open(outputVideo);
+
+for frame = 1:numOfFrames
+    img = ConvertText2Image(sprintf('#%03d', frame+startFrame));
+    img = imresize(img, [180, 320], 'nearest');
+    % disp(sprintf('#%03d', frame))
+    % imshow(img)
+    writeVideo(outputVideo, img);
+end
+close(outputVideo);
+
 
 outputVideo = VideoWriter('OPT/org');
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
-for i = startFrame/iterFrame+1:endFrame/iterFrame
-    tensorFile = fopen(strcat(currentPath, '/video', num2str(i-1), '.tensor'), 'r');
+for i = startFrame/iterFrame:endFrame/iterFrame-1
+    tensorFile = fopen(strcat(currentPath, '/video', num2str(i), '.tensor'), 'r');
     tic;
     X = fscanf(tensorFile, "%d %d %d %d %d", [5, inf]);
     for row = X
@@ -61,7 +76,6 @@ end
 
 
 % tic;
-threshold = 10;
 idx = repmat({':'}, 1, length(dims));
 idx(end) = {1:tao};
 initX = videoTensor(:, :, :, 1:tao);
@@ -82,9 +96,8 @@ prevImgErr = frob(Test(:,:,:,end)-initX(:,:,:,end))
 
 toc;
 for t = 1:minibatchSize:numOfFrames-tao
-    fprintf('\n> %dth step\n', t);
-    % get the incoming slice
     frame = tao+t;
+    fprintf('\n> %dth frame\n', frame);
     endTime = min(tao+t+minibatchSize-1, numOfFrames);
     idx(end) = {tao+t:endTime};
     
@@ -102,14 +115,7 @@ for t = 1:minibatchSize:numOfFrames-tao
     As4 = Uest{4};
 
     Test = cpdgen(Uest);
-    testFrame(t) = frame+startFrame;
-    testRuntime(t) = toc;
-    testNormErr(t) = frob(Test-Xt);
-    testFitness(t) = (1-testNormErr(t)/frob(Xt))*100;
-
-
-    Test = permute(cpdgen(Uest), [4 1 2 3]);
-    imgEst = squeeze(Test(frame, :, :, :));
+    imgEst = squeeze(Test(:, :, :, frame));
     imgOrg = squeeze(Xt(:, :, :, frame));
     testImgErr1(t) = frob(imgEst-imgOrg);
 
@@ -123,12 +129,16 @@ for t = 1:minibatchSize:numOfFrames-tao
         onlineAs_N = initAs{end};
     
         Uest = [onlineAs'; {onlineAs_N}];
-        Test = permute(cpdgen(Uest), [4 1 2 3]);
-        imgEst = squeeze(Test(frame, :, :, :));
+        Test = cpdgen(Uest);
+        imgEst = squeeze(Test(:, :, :, frame));
         whos initAs onlineAs onlineAs_N
     end
     toc;
 
+    testFrame(t) = frame+startFrame;
+    testRuntime(t) = toc;
+    testNormErr(t) = frob(Test-Xt);
+    testFitness(t) = (1-testNormErr(t)/frob(Xt))*100;
     testImgErr(t) = frob(imgEst-imgOrg);
     prevImgErr = testImgErr(t);
     writeVideo(outputVideo,uint8(imgEst));
