@@ -350,6 +350,16 @@ elseif opt == 5
         testNormErr(t) = frob(Test-Xt);
         testFitness(t) = (1-testNormErr(t)/frob(Xt))*100;
         toc;
+
+    
+
+        Test = permute(cpdgen(Uest), [4 1 2 3]);
+        imgEst = squeeze(Test(frame, :, :, :));
+        imgOrg = squeeze(Xt(:, :, :, frame));
+        % frob(imgEst-imgOrg)
+        testImgErr(t) = (1-frob(imgEst-imgOrg)/frob(imgOrg))*100;
+
+        [testImgErr(t-1), testImgErr(t)]
         % if frame == drasticFrame - startFrame
         %     disp('drastic')
         %     options.Display = false; % Show progress on the command line.
@@ -371,11 +381,7 @@ elseif opt == 5
         
         % end
 
-    
-
-        Test = permute(cpdgen(Uest), [4 1 2 3]);
-        img = uint8(squeeze(Test(frame, :, :, :)));
-        writeVideo(outputVideo,img);
+        writeVideo(outputVideo,uint8(imgEst));
     end
     whos As1 As2 As3 As4
 end
@@ -384,6 +390,7 @@ end
 
 close(outputVideo);
 fileID = fopen(strcat('OPT/opt', num2str(opt),'.txt'),'w');
-testRuntime_Fitness = [testFrame', testRuntime', testFitness'];
-fprintf(fileID, "%d\t%.4f\t%.4f%%\n", testRuntime_Fitness(1:numOfFrames-tao, :)');
+testRuntime_Fitness = [testFrame', testRuntime', testFitness', testImgErr'];
+testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :)
+fprintf(fileID, "%d\t%.4f\t%.4f%%\n", testRuntime_Fitness');
 fclose(fileID);
