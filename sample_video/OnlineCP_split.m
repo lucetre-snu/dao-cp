@@ -1,4 +1,6 @@
-addpath('../packages');
+addpath('../packages/tensorlab_2016-03-28');
+addpath('../packages/tensor_toolbox-v3.1');
+addpath('../packages/onlineCP');
 warning('off', 'all');
 
 % 205 * 180(31~210) * 320 * 3
@@ -10,7 +12,7 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-R = 50;
+R = 100;
 threshold = 1.5;
 
 % OnlineCP w. trigger in full video
