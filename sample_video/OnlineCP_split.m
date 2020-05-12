@@ -1,6 +1,4 @@
-addpath('../tensorlab_2016-03-28');
-addpath('../tensor_toolbox-v3.1');
-addpath('../onlineCP');
+addpath('../packages');
 warning('off', 'all');
 
 % 205 * 180(31~210) * 320 * 3
@@ -12,12 +10,12 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-R = 10;
+R = 50;
 threshold = 1.5;
 
 % OnlineCP w. trigger in full video
 
-startFrame = 180;
+startFrame = 0;
 endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
@@ -65,7 +63,7 @@ for frame = 1:numOfFrames
 end
 close(outputVideo);
 
-outputVideo = VideoWriter('OPT/trigger');
+outputVideo = VideoWriter('OPT/split');
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
@@ -89,7 +87,10 @@ onlineAs_N = initAs{end};
 Uest = [onlineAs'; {onlineAs_N}];
 Test = cpdgen(Uest);
 whos Test initX
-prevImgErr = frob(Test(:,:,:,end)-initX(:,:,:,end))
+
+imgEst = squeeze(Test(:,:,:,end));
+imgOrg = squeeze(initX(:,:,:,end));
+prevImgNormErr = frob(imgEst - imgOrg)
 
 toc;
 for t = 1:minibatchSize:numOfFrames-tao
@@ -114,10 +115,10 @@ for t = 1:minibatchSize:numOfFrames-tao
     Test = cpdgen(Uest);
     imgEst = squeeze(Test(:, :, :, frame));
     imgOrg = squeeze(Xt(:, :, :, frame));
-    testImgErr1(t) = frob(imgEst-imgOrg);
+    testImgNormErr1(t) = frob(imgEst-imgOrg);
 
 
-    if prevImgErr * threshold < testImgErr1(t)
+    if prevImgNormErr*threshold < testImgNormErr1(t)
         disp('Drastic scene detected. CP-ALS update triggered!');
         initAs = cpd(Xt, R, options);
     
@@ -134,18 +135,16 @@ for t = 1:minibatchSize:numOfFrames-tao
 
     testFrame(t) = frame+startFrame;
     testRuntime(t) = toc;
-    testNormErr(t) = frob(Test-Xt);
-    testFitness(t) = (1-testNormErr(t)/frob(Xt))*100;
-    testImgErr(t) = frob(imgEst-imgOrg);
-    prevImgErr = testImgErr(t);
+    testImgNormErr(t) = frob(imgEst-imgOrg);
+    prevImgNormErr = testImgNormErr(t);
     writeVideo(outputVideo,uint8(imgEst));
 end
 whos As1 As2 As3 As4
 
 close(outputVideo);
-fileID = fopen('OPT/trigger.txt','w');
-testRuntime_Fitness = [testFrame', testRuntime', testFitness', testImgErr', testImgErr1'];
+fileID = fopen('OPT/split.txt','w');
+testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
 testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :);
-result = sprintf('%d\t%.4fs\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4fs\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);
