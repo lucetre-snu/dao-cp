@@ -1,9 +1,11 @@
-addpath('../tensorlab_2016-03-28');
-addpath('../tensor_toolbox-v3.1');
-addpath('../onlineCP');
+addpath('../packages/tensorlab_2016-03-28');
+addpath('../packages/tensor_toolbox-v3.1');
+addpath('../packages/onlineCP');
 warning('off', 'all');
 
-% 205 * 180(31~210) * 320 * 3
+% OnlineCP w. trigger in full video
+% R=20;OnlineCP_trigger
+
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
 options.Initialization = @cpd_rnd; % Select pseudorandom initialization.
@@ -12,16 +14,15 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-R = 10;
 threshold = 1.5;
 
-% OnlineCP w. trigger in full video
 
-startFrame = 180;
+startFrame = 0;
 endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
 tao = 5;
+% 205 * 180(31~210) * 320 * 3
 dims = [180 320 3 205];
 iterFrame = 5;
 videoTensor = NaN(dims);
@@ -65,7 +66,7 @@ for frame = 1:numOfFrames
 end
 close(outputVideo);
 
-outputVideo = VideoWriter('OPT/trigger');
+outputVideo = VideoWriter(strcat('OPT/trigger-',num2str(R)));
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
@@ -143,7 +144,7 @@ end
 whos As1 As2 As3 As4
 
 close(outputVideo);
-fileID = fopen('OPT/trigger.txt','w');
+fileID = fopen(strcat('OPT/trigger-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testFitness', testImgErr', testImgErr1'];
 testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :);
 result = sprintf('%d\t%.4fs\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
