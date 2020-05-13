@@ -4,7 +4,7 @@ addpath('../packages/onlineCP');
 warning('off', 'all');
 
 % OnlineCP w. trigger in full video
-% R=20;OnlineCP_trigger
+% R=60;OnlineCP_trigger
 
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
