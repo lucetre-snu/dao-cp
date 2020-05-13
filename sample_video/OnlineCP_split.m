@@ -3,7 +3,9 @@ addpath('../packages/tensor_toolbox-v3.1');
 addpath('../packages/onlineCP');
 warning('off', 'all');
 
-% 205 * 180(31~210) * 320 * 3
+% OnlineCP w. split in full video
+% R=10;OnlineCP_split
+
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
 options.Initialization = @cpd_rnd; % Select pseudorandom initialization.
@@ -12,16 +14,14 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-R = 100;
 threshold = 1.5;
-
-% OnlineCP w. trigger in full video
 
 startFrame = 0;
 endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
 tao = 5;
+% 205 * 180(31~210) * 320 * 3
 dims = [180 320 3 205];
 iterFrame = 5;
 videoTensor = NaN(dims);
@@ -65,7 +65,7 @@ for frame = 1:numOfFrames
 end
 close(outputVideo);
 
-outputVideo = VideoWriter('OPT/split');
+outputVideo = VideoWriter(strcat('OPT/split-',num2str(R)));
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
@@ -74,54 +74,31 @@ for frame = 1:tao
     writeVideo(outputVideo,img);
 end
 
-
-% tic;
 idx = repmat({':'}, 1, length(dims));
-idx(end) = {1:tao};
-initX = videoTensor(:, :, :, 1:tao);
+prevDrasticFrame = 1;
 
-initAs = cpd(initX, R, options);
-
-[onlinePs, onlineQs] = onlineCP_initial_tenlab(initX, initAs, R);
-onlineAs = initAs(1:end-1);
-onlineAs_N = initAs{end};
-
-Uest = [onlineAs'; {onlineAs_N}];
-Test = cpdgen(Uest);
-whos Test initX
-
-imgEst = squeeze(Test(:,:,:,end));
-imgOrg = squeeze(initX(:,:,:,end));
-prevImgNormErr = frob(imgEst - imgOrg)
-
-toc;
-for t = 1:minibatchSize:numOfFrames-tao
-    frame = tao+t;
+for frame = 1:minibatchSize:numOfFrames
+    t = frame;
     fprintf('\n> %dth frame\n', frame+startFrame);
-    endTime = min(tao+t+minibatchSize-1, numOfFrames);
-    idx(end) = {tao+t:endTime};
+    endTime = min(frame+minibatchSize-1, numOfFrames);
+    idx(end) = {frame:endTime};
     
     x = squeeze(videoTensor(idx{:}));
     idx(end) = {1:endTime};
     Xt = videoTensor(idx{:});
-    tic;
-    [onlineAs, onlinePs, onlineQs, onlineAlpha] = onlineCP_update(x, onlineAs, onlinePs, onlineQs);
-    onlineAs_N(end+1,:) = onlineAlpha;
-    Uest = [onlineAs'; {onlineAs_N}];
-
-    As1 = Uest{1};
-    As2 = Uest{2};
-    As3 = Uest{3};
-    As4 = Uest{4};
-
-    Test = cpdgen(Uest);
-    imgEst = squeeze(Test(:, :, :, frame));
     imgOrg = squeeze(Xt(:, :, :, frame));
-    testImgNormErr1(t) = frob(imgEst-imgOrg);
 
+    tic;
 
-    if prevImgNormErr*threshold < testImgNormErr1(t)
-        disp('Drastic scene detected. CP-ALS update triggered!');
+    if frame - prevDrasticFrame < tao-1
+        disp('CP-ALS update!');
+        Uest = cpd(Xt, R, options);
+        Test = cpdgen(Uest);
+        imgEst = squeeze(Test(:, :, :, frame));
+        testImgNormErr1(t) = frob(imgEst-imgOrg);
+
+    elseif frame - prevDrasticFrame == tao-1
+        disp('OnlineCP init!');
         initAs = cpd(Xt, R, options);
     
         [onlinePs, onlineQs] = onlineCP_initial_tenlab(Xt, initAs, R);
@@ -131,7 +108,31 @@ for t = 1:minibatchSize:numOfFrames-tao
         Uest = [onlineAs'; {onlineAs_N}];
         Test = cpdgen(Uest);
         imgEst = squeeze(Test(:, :, :, frame));
-        whos initAs onlineAs onlineAs_N
+        testImgNormErr1(t) = frob(imgEst-imgOrg);
+
+    else
+        disp('OnlineCP update!');
+        [onlineAs, onlinePs, onlineQs, onlineAlpha] = onlineCP_update(x, onlineAs, onlinePs, onlineQs);
+        onlineAs_N(end+1,:) = onlineAlpha;
+        Uest = [onlineAs'; {onlineAs_N}];
+    
+        As1 = Uest{1};
+        As2 = Uest{2};
+        As3 = Uest{3};
+        As4 = Uest{4};
+    
+        Test = cpdgen(Uest);
+        imgEst = squeeze(Test(:, :, :, frame));
+        testImgNormErr1(t) = frob(imgEst-imgOrg);
+    
+    
+        if prevImgNormErr*threshold < testImgNormErr1(t)
+            disp('Drastic scene detected. CP-ALS update triggered!');
+            Uest = cpd(Xt, R, options);
+            Test = cpdgen(Uest);
+            imgEst = squeeze(Test(:, :, :, frame));
+            prevDrasticFrame = frame;
+        end
     end
     toc;
 
@@ -144,9 +145,8 @@ end
 whos As1 As2 As3 As4
 
 close(outputVideo);
-fileID = fopen('OPT/split.txt','w');
+fileID = fopen(strcat('OPT/split-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
-testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :);
 result = sprintf('%d\t%.4fs\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);

@@ -4,7 +4,7 @@ addpath('../packages/onlineCP');
 warning('off', 'all');
 
 % OnlineCP w. trigger in full video
-% R=60;OnlineCP_trigger
+% R=170;OnlineCP_trigger
 
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
@@ -15,7 +15,6 @@ options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
 threshold = 1.5;
-
 
 startFrame = 0;
 endFrame = 205;
