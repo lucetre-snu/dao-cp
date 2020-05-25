@@ -82,11 +82,11 @@ for frame = 1:minibatchSize:numOfFrames
     fprintf('\n> %dth frame\n', frame+startFrame);
     endTime = min(frame+minibatchSize-1, numOfFrames);
     idx(end) = {frame:endTime};
-    
     x = squeeze(videoTensor(idx{:}));
-    idx(end) = {1:endTime};
+
+    idx(end) = {prevDrasticFrame:endTime};
     Xt = videoTensor(idx{:});
-    imgOrg = squeeze(Xt(:, :, :, frame));
+    imgOrg = squeeze(Xt(:, :, :, frame-prevDrasticFrame+1));
 
     tic;
 
@@ -94,7 +94,7 @@ for frame = 1:minibatchSize:numOfFrames
         disp('CP-ALS update!');
         Uest = cpd(Xt, R, options);
         Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
+        imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         testImgNormErr1(t) = frob(imgEst-imgOrg);
 
     elseif frame - prevDrasticFrame == tao-1
@@ -107,7 +107,7 @@ for frame = 1:minibatchSize:numOfFrames
     
         Uest = [onlineAs'; {onlineAs_N}];
         Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
+        imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         testImgNormErr1(t) = frob(imgEst-imgOrg);
 
     else
@@ -122,16 +122,18 @@ for frame = 1:minibatchSize:numOfFrames
         As4 = Uest{4};
     
         Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
+        imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         testImgNormErr1(t) = frob(imgEst-imgOrg);
     
     
         if prevImgNormErr*threshold < testImgNormErr1(t)
             disp('Drastic scene detected. CP-ALS update triggered!');
+            prevDrasticFrame = frame;
+            idx(end) = {prevDrasticFrame:endTime};
+            Xt = videoTensor(idx{:});
             Uest = cpd(Xt, R, options);
             Test = cpdgen(Uest);
-            imgEst = squeeze(Test(:, :, :, frame));
-            prevDrasticFrame = frame;
+            imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         end
     end
     toc;
