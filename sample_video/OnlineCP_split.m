@@ -15,7 +15,6 @@ options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
 threshold = 1.5;
-
 startFrame = 0;
 endFrame = 205;
 % startFrame = 0;
@@ -71,11 +70,6 @@ outputVideo = VideoWriter(strcat('OPT/split-',num2str(R)));
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
-for frame = 1:tao
-    img = uint8(squeeze(videoTensor(:, :, :, frame)));
-    writeVideo(outputVideo,img);
-end
-
 idx = repmat({':'}, 1, length(dims));
 prevDrasticFrame = 1;
 
@@ -94,12 +88,8 @@ for frame = 1:minibatchSize:numOfFrames
 
     if frame - prevDrasticFrame < tao-1
         disp('continue.');
-        testImgNormErr1(t) = 0;
         testFrame(t) = frame+startFrame;
         testRuntime(t) = toc;
-        testImgNormErr(t) = 0;
-        prevImgNormErr = 0;
-        % writeVideo(outputVideo,uint8(imgEst));
         continue;
 
     elseif frame-prevDrasticFrame+1 == tao
@@ -113,6 +103,8 @@ for frame = 1:minibatchSize:numOfFrames
         Uest = [onlineAs'; {onlineAs_N}];
         Test = cpdgen(Uest);
 
+        testFrame(t) = frame+startFrame;
+        testRuntime(t) = toc;
         for i = 1:tao
             prevFrame = frame-prevDrasticFrame+1-tao+i
             imgEst = squeeze(Test(:, :, :, prevFrame));
@@ -147,16 +139,8 @@ for frame = 1:minibatchSize:numOfFrames
         if prevImgNormErr*threshold < testImgNormErr1(t)
             disp('Drastic scene detected. CP-ALS update triggered!');
             prevDrasticFrame = frame;
-            % idx(end) = {prevDrasticFrame:endTime};
-            % Xt = videoTensor(idx{:});
-            % Uest = cpd(Xt, R, options);
-            % Test = cpdgen(Uest);
-            % imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
             testFrame(t) = frame+startFrame;
             testRuntime(t) = toc;
-            testImgNormErr(t) = 0;
-            prevImgNormErr = 0;
-            % writeVideo(outputVideo,uint8(imgEst));
             continue;
         end
     end
