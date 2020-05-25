@@ -115,7 +115,7 @@ for t = 1:minibatchSize:numOfFrames-tao
     imgEst = squeeze(Test(:, :, :, frame));
     imgOrg = squeeze(Xt(:, :, :, frame));
     testImgErr1(t) = frob(imgEst-imgOrg);
-
+    [prevImgErr, testImgErr1(t)]
 
     if prevImgErr * threshold < testImgErr1(t)
         disp('Drastic scene detected. CP-ALS update triggered!');
