@@ -14,8 +14,10 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-threshold = 1.5;
+threshold = 2;
 
+% startFrame = 120;
+% endFrame = 140;
 startFrame = 0;
 endFrame = 205;
 
@@ -97,7 +99,7 @@ for frame = 1:minibatchSize:numOfFrames
         imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         testImgNormErr1(t) = frob(imgEst-imgOrg);
 
-    elseif frame - prevDrasticFrame == tao-1
+    elseif frame - prevDrasticFrame + 1 == tao
         disp('OnlineCP init!');
         initAs = cpd(Xt, R, options);
     
@@ -149,6 +151,6 @@ whos As1 As2 As3 As4
 close(outputVideo);
 fileID = fopen(strcat('OPT/split-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
-result = sprintf('%d\t%.4fs\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4f\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);

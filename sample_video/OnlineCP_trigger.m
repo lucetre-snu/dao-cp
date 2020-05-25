@@ -146,6 +146,6 @@ close(outputVideo);
 fileID = fopen(strcat('OPT/trigger-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testFitness', testImgErr', testImgErr1'];
 testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :);
-result = sprintf('%d\t%.4fs\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4f\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);
