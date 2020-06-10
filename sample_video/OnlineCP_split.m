@@ -14,10 +14,11 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-threshold = 1.5;
-
+threshold = 1.8;
 startFrame = 0;
 endFrame = 205;
+% startFrame = 0;
+% endFrame = 205;
 
 numOfFrames = endFrame - startFrame;
 tao = 5;
@@ -69,11 +70,6 @@ outputVideo = VideoWriter(strcat('OPT/split-',num2str(R)));
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
-for frame = 1:tao
-    img = uint8(squeeze(videoTensor(:, :, :, frame)));
-    writeVideo(outputVideo,img);
-end
-
 idx = repmat({':'}, 1, length(dims));
 prevDrasticFrame = 1;
 
@@ -82,23 +78,22 @@ for frame = 1:minibatchSize:numOfFrames
     fprintf('\n> %dth frame\n', frame+startFrame);
     endTime = min(frame+minibatchSize-1, numOfFrames);
     idx(end) = {frame:endTime};
-    
     x = squeeze(videoTensor(idx{:}));
-    idx(end) = {1:endTime};
+
+    idx(end) = {prevDrasticFrame:endTime};
     Xt = videoTensor(idx{:});
-    imgOrg = squeeze(Xt(:, :, :, frame));
+    imgOrg = squeeze(Xt(:, :, :, frame-prevDrasticFrame+1));
 
     tic;
 
     if frame - prevDrasticFrame < tao-1
-        disp('CP-ALS update!');
-        Uest = cpd(Xt, R, options);
-        Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
-        testImgNormErr1(t) = frob(imgEst-imgOrg);
+        disp('continue.');
+        testFrame(t) = frame+startFrame;
+        testRuntime(t) = toc;
+        continue;
 
-    elseif frame - prevDrasticFrame == tao-1
-        disp('OnlineCP init!');
+    elseif frame-prevDrasticFrame+1 == tao
+        disp('OnlineCP init! CP-ALS update!');
         initAs = cpd(Xt, R, options);
     
         [onlinePs, onlineQs] = onlineCP_initial_tenlab(Xt, initAs, R);
@@ -107,8 +102,21 @@ for frame = 1:minibatchSize:numOfFrames
     
         Uest = [onlineAs'; {onlineAs_N}];
         Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
-        testImgNormErr1(t) = frob(imgEst-imgOrg);
+
+        testFrame(t) = frame+startFrame;
+        testRuntime(t) = toc;
+        for i = 1:tao
+            prevFrame = frame-prevDrasticFrame+1-tao+i
+            imgEst = squeeze(Test(:, :, :, prevFrame));
+            imgOrg = squeeze(Xt(:, :, :, prevFrame));
+            if i > 1
+                testImgNormErr1(t-tao+i) = frob(imgEst-imgOrg);
+            end
+            testImgNormErr(t-tao+i) = frob(imgEst-imgOrg);
+            writeVideo(outputVideo,uint8(imgEst));
+        end
+        prevImgNormErr = testImgNormErr(t);
+        continue;
 
     else
         disp('OnlineCP update!');
@@ -122,16 +130,18 @@ for frame = 1:minibatchSize:numOfFrames
         As4 = Uest{4};
     
         Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
+        imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
         testImgNormErr1(t) = frob(imgEst-imgOrg);
     
+        % print log
+        [prevImgNormErr, testImgNormErr1(t)]
     
         if prevImgNormErr*threshold < testImgNormErr1(t)
             disp('Drastic scene detected. CP-ALS update triggered!');
-            Uest = cpd(Xt, R, options);
-            Test = cpdgen(Uest);
-            imgEst = squeeze(Test(:, :, :, frame));
             prevDrasticFrame = frame;
+            testFrame(t) = frame+startFrame;
+            testRuntime(t) = toc;
+            continue;
         end
     end
     toc;
@@ -147,6 +157,6 @@ whos As1 As2 As3 As4
 close(outputVideo);
 fileID = fopen(strcat('OPT/split-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
-result = sprintf('%d\t%.4fs\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4f\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);

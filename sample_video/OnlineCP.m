@@ -4,7 +4,7 @@ addpath('../packages/onlineCP');
 warning('off', 'all');
 
 % OnlineCP w. trigger in full video
-% R=170;OnlineCP_trigger
+% R=100;OnlineCP
 
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
@@ -14,7 +14,6 @@ options.AlgorithmOptions.LineSearch = @cpd_els; % Add exact line search.
 options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
-threshold = 1.5;
 
 startFrame = 0;
 endFrame = 205;
@@ -65,7 +64,7 @@ for frame = 1:numOfFrames
 end
 close(outputVideo);
 
-outputVideo = VideoWriter(strcat('OPT/trigger-',num2str(R)));
+outputVideo = VideoWriter(strcat('OPT/ocp-',num2str(R)));
 outputVideo.FrameRate = frameRate;
 open(outputVideo);
 
@@ -115,22 +114,6 @@ for t = 1:minibatchSize:numOfFrames-tao
     imgEst = squeeze(Test(:, :, :, frame));
     imgOrg = squeeze(Xt(:, :, :, frame));
     testImgErr1(t) = frob(imgEst-imgOrg);
-    [prevImgErr, testImgErr1(t)]
-
-    if prevImgErr * threshold < testImgErr1(t)
-        disp('Drastic scene detected. CP-ALS update triggered!');
-        initAs = cpd(Xt, R, options);
-    
-        [onlinePs, onlineQs] = onlineCP_initial_tenlab(Xt, initAs, R);
-        onlineAs = initAs(1:end-1);
-        onlineAs_N = initAs{end};
-    
-        Uest = [onlineAs'; {onlineAs_N}];
-        Test = cpdgen(Uest);
-        imgEst = squeeze(Test(:, :, :, frame));
-        whos initAs onlineAs onlineAs_N
-    end
-    toc;
 
     testFrame(t) = frame+startFrame;
     testRuntime(t) = toc;
@@ -146,6 +129,6 @@ close(outputVideo);
 fileID = fopen(strcat('OPT/trigger-',num2str(R),'.txt'),'w');
 testRuntime_Fitness = [testFrame', testRuntime', testFitness', testImgErr', testImgErr1'];
 testRuntime_Fitness = testRuntime_Fitness(1:numOfFrames-tao, :);
-result = sprintf('%d\t%.4f\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4fs\t%.4f%%\t%.f\t%.f\n', testRuntime_Fitness')
 fprintf(fileID, '%s', result);
 fclose(fileID);
