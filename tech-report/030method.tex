@@ -1,0 +1,13 @@
+We've developed our methods by extending the basic intuition of \textit{OnlineCP}. Since dynamic tensor decomposition pursues shorter time factor updates, this will result low accuracy fitting when real-time data incomes. To optimize the speed accuracy problem, we'd like to trigger static decomposition like \textit{CP-ALS} while dynamic method like \textit{OnlineCP} is being done.
+
+\subsection{\em OnlineCP-trigger}
+\textbf{Detection Approach}: \textit{CP-ALS} activates whole temporal factor updates and enables high accuracy decomposition. Drastic data can be detected with image error norm and its ratio between every neighboring time frame is used to trigger \textit{CP-ALS} in this approach. Requiring condition for trigger function is as below.
+
+\subsection{\em OnlineCP-split}
+\textbf{Split Approach}: trigger function in detection approach tells us sudden change in data. What if the incoming data may have a new theme unseen before? It implies that tensor separation and a new decomposition to start are needed. In this approach, we'd like to use the trigger function for splitting tensors to entirely different serial themes. (e.g. A, B, C)
+
+\subsection{\em OnlineCP-select}
+\textbf{Selection Approach}: Similarily to split approach, when trigger function is called, whether to split tensor or not is  continue dynamic factorization or not  
+
+Concatenate  update w. CP-ALS, then continue prev OnlineCP when similar tensor theme has detected (A, B, B’): OnlineCP-concat
+...
