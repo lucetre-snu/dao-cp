@@ -6,6 +6,7 @@
 \usepackage{mdwlist}
 \usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
 \usepackage{kotex}
+\usepackage{amsmath}
 
 \setlength{\oddsidemargin}{0.0in}
 \setlength{\evensidemargin}{0.0in}
@@ -21,6 +22,7 @@
 
 \begin{document}
 
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
 \newcommand{\beq}{\begin{equation}}
 \newcommand{\eeq}{\end{equation}}
 \newcommand{\bit}{\begin{itemize*}}
@@ -67,6 +69,7 @@
     \label{sec:proposed}
   	\input{030method}
 
+\newpage
 \section{Experiments}
     \label{sec:experiments}
     \input{040experiments}
