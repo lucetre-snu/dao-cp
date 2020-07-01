@@ -1,9 +1,9 @@
 
-Given a temporally growing tensor, how can we analyze it efficiently? Multi-dimensional arrays or tensors have been widely used to model real world data. Tensor decomposition plays an significant role in latent feature detection and prediction of unobservable entries. Each tensor can have different lengths of modes and tensors having their size consistent are called static, and the others are called dynamic tensors. Most of existing tensor analysis methods such as CP-ALS or HOSVD decompose static tensors with high fitness. However, applying static tensor decomposition methods to dynamic tensors is actually an inappropriate way in time and space efficiency.
+Given a temporally growing tensor, how can we analyze it efficiently? Multi-dimensional arrays or tensors have been widely used to model real world data. Tensor decomposition plays an significant role in latent feature detection and prediction of unobservable entries. Each tensor can have different lengths of modes and tensors having their size consistent are called static, and the others are called dynamic tensors. Most of existing tensor analysis methods such as \cpals or \hosvd decompose static tensors with high fitness. However, applying static tensor decomposition methods to dynamic tensors is actually an inappropriate way in time and space efficiency.
 
 For tensors dynamically growing in the temporal mode (e.g. sensor data on every point of the room), their factorization invokes lots of computations to update all the entries on time factor. Data stream produces numerous amounts of data incomes every second and it became more important to maintain each tensor factorization results. The contributions of this project are the following:
 \bit
-\item our proposed {\em OnlineTensorAnalysis} performs online tensor decomposition preserving accuracy without time dilation due to short data income intervals.
-\item it is time scalable, being linear on the length of temporal mode. 
-\item it automatically detects drastic data changes and creates starting points of decomposition for accuracy optimization.
+\item \method performs online tensor decomposition preserving accuracy without time dilation due to short data income intervals.
+\item \method is time scalable, being linear on the length of temporal mode. 
+\item \method automatically detects drastic data changes and creates starting points of decomposition for accuracy optimization.
 \eit
