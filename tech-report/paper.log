@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  2 JUL 2020 13:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  2 JUL 2020 18:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -660,37 +660,56 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./030method.tex
-<FIG/OnlineCP-trigger.png, id=16, 1383.66937pt x 1436.36626pt>
+<FIG/method-comparison1.png, id=16, 987.69pt x 1181.91562pt>
+File: FIG/method-comparison1.png Graphic file (type png)
+
+<use FIG/method-comparison1.png>
+Package pdftex.def Info: FIG/method-comparison1.png used on input line 5.
+(pdftex.def)             Requested size: 230.18251pt x 275.44179pt.
+
+<FIG/method-comparison3.png, id=18, 984.67876pt x 849.1725pt>
+File: FIG/method-comparison3.png Graphic file (type png)
+
+<use FIG/method-comparison3.png>
+Package pdftex.def Info: FIG/method-comparison3.png used on input line 6.
+(pdftex.def)             Requested size: 230.18251pt x 198.50601pt.
+
+<FIG/method-comparison2.png, id=19, 1386.68062pt x 749.80125pt>
+File: FIG/method-comparison2.png Graphic file (type png)
+
+<use FIG/method-comparison2.png>
+Package pdftex.def Info: FIG/method-comparison2.png used on input line 9.
+(pdftex.def)             Requested size: 469.75499pt x 254.00232pt.
+ [2 <./FIG/method-comparison1.png> <./FIG/method-comparison3.png> <./FIG/method
+-comparison2.png>]
+<FIG/OnlineCP-trigger.png, id=26, 1383.66937pt x 1436.36626pt>
 File: FIG/OnlineCP-trigger.png Graphic file (type png)
 
 <use FIG/OnlineCP-trigger.png>
-Package pdftex.def Info: FIG/OnlineCP-trigger.png used on input line 12.
+Package pdftex.def Info: FIG/OnlineCP-trigger.png used on input line 21.
 (pdftex.def)             Requested size: 399.2946pt x 414.49725pt.
- [2 <./FIG/OnlineCP-trigger.png>]
-<FIG/OnlineCP-split.png, id=27, 2334.7225pt x 1971.365pt>
+ [3 <./FIG/OnlineCP-trigger.png>]
+<FIG/OnlineCP-split.png, id=36, 2334.7225pt x 1971.365pt>
 File: FIG/OnlineCP-split.png Graphic file (type png)
 
 <use FIG/OnlineCP-split.png>
-Package pdftex.def Info: FIG/OnlineCP-split.png used on input line 20.
+Package pdftex.def Info: FIG/OnlineCP-split.png used on input line 29.
 (pdftex.def)             Requested size: 422.77661pt x 356.96611pt.
- [3 <./FIG/OnlineCP-split.png>]
-
-LaTeX Warning: Command \textquoteright invalid in math mode on input line 25.
-
-<FIG/OnlineCP-select.png, id=31, 2354.7975pt x 1967.35pt>
+ [4 <./FIG/OnlineCP-split.png>]
+<FIG/OnlineCP-select.png, id=40, 2354.7975pt x 1967.35pt>
 File: FIG/OnlineCP-select.png Graphic file (type png)
 
 <use FIG/OnlineCP-select.png>
-Package pdftex.def Info: FIG/OnlineCP-select.png used on input line 28.
+Package pdftex.def Info: FIG/OnlineCP-select.png used on input line 37.
 (pdftex.def)             Requested size: 422.77661pt x 353.20714pt.
-) [4 <./FIG/OnlineCP-select.png>]
-(./040experiments.tex <FIG/data.png, id=36, 178.6675pt x 144.54pt>
+) [5 <./FIG/OnlineCP-select.png>]
+(./040experiments.tex <FIG/data.png, id=45, 178.6675pt x 144.54pt>
 File: FIG/data.png Graphic file (type png)
 
 <use FIG/data.png>
 Package pdftex.def Info: FIG/data.png used on input line 16.
 (pdftex.def)             Requested size: 140.92792pt x 114.0155pt.
- <FIG/plot.png, id=37, 166.6225pt x 141.52875pt>
+ <FIG/plot.png, id=46, 166.6225pt x 141.52875pt>
 File: FIG/plot.png Graphic file (type png)
 
 <use FIG/plot.png>
@@ -698,36 +717,39 @@ Package pdftex.def Info: FIG/plot.png used on input line 17.
 (pdftex.def)             Requested size: 140.92792pt x 119.7126pt.
 ) (./050related.tex) (./060conclusions.tex)
 No file paper.bbl.
-[5 <./FIG/data.png> <./FIG/plot.png>] (./099appendix.tex) [6] (./paper.aux) ) 
+[6 <./FIG/data.png> <./FIG/plot.png>] (./099appendix.tex) [7] (./paper.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 3433 strings out of 493029
- 45857 string characters out of 6136234
+ 3448 strings out of 493029
+ 46292 string characters out of 6136234
  120183 words of memory out of 5000000
- 6857 multiletter control sequences out of 15000+600000
+ 6869 multiletter control sequences out of 15000+600000
  11453 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  38i,11n,23p,601b,346s stack positions out of 5000i,500n,10000p,200000b,80000s
-</
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on paper.pdf (6 pages, 483469 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on paper.pdf (7 pages, 933200 bytes).
 PDF statistics:
- 100 PDF objects out of 1000 (max. 8388607)
- 66 compressed objects within 1 object stream
+ 111 PDF objects out of 1000 (max. 8388607)
+ 70 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

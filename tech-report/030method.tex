@@ -1,6 +1,15 @@
 
 We've developed our methods by extending the basic intuition of \ocp. Since dynamic tensor decomposition pursues shorter time factor updates, this results low accuracy factorization when real-time data incomes. To optimize the speed accuracy problem, we'd like to trigger static decomposition method, \cpals while dynamic method like \ocp is being done.
 
+\begin{center}
+	\includegraphics[width=0.49\textwidth]{FIG/method-comparison1.png}
+	\includegraphics[width=0.49\textwidth]{FIG/method-comparison3.png}
+\end{center}
+\begin{center}
+	\includegraphics[width=1\textwidth]{FIG/method-comparison2.png}
+\end{center}
+
+\newpage
 \subsection{\em OnlineCP-trigger}
 \textbf{Detection Approach}: \cpals activates whole temporal factor updates and enables high accuracy decomposition. Drastic data can be detected by calculating image error norm and its ratio between neighboring time steps. The moment for triggering \cpals is when temporal ratio of error norm for incoming data exceeds threshold.
 
@@ -22,7 +31,7 @@ We've developed our methods by extending the basic intuition of \ocp. Since dyna
 
 \newpage
 \subsection{\em OnlineCP-select}
-\textbf{Selection Approach}: Similarly to split approach, trigger function now decides whether to split or to concatenate behind after one temporal factor update. It allows to store the tensor efficiently; group tensors with similar themes and split them otherwise. (e.g. $A$, $B$, $B’$, $C$)
+\textbf{Selection Approach}: Similarly to split approach, trigger function now decides whether to split or to concatenate behind after one temporal factor update. It allows to store the tensor efficiently; group tensors with similar themes and split them otherwise. (e.g. $A$, $B$, $B'$, $C$)
 
 \begin{center}
 	\includegraphics[width=0.9\textwidth]{FIG/OnlineCP-select.png}
