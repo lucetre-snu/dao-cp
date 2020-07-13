@@ -5,29 +5,35 @@ warning('off', 'all');
 
 
 split_points = [0 100 200 250 500 600 700 750 800 950 1000];
+theme = [       1 1   2   2   2   3   4   5   5   5];
 split_size = zeros(1, size(split_points, 2) - 1);
 split_N = size(split_size, 2);
 
 num = 0;
+prevTheme = 0;
 for i = 1:split_N
     split_size(i) = split_points(i+1) - split_points(i);
 
     size_tens = [10 20 30]; R = 10;
-    U0 = cpd_rnd(size_tens, R);
-    T0 = round(cpdgen(U0)*100);
-    T0 = reshape(T0, [1 size_tens]);
-
-    size_tens = [split_size(i) size_tens]; R = 10;
-    U = cpd_rnd(size_tens, R);
+    if prevTheme ~= theme(i)
+        U0 = cpd_rnd(size_tens, R);
+        T0 = round(cpdgen(U0)*100);
+        T0 = reshape(T0, [1 size_tens]);
+        prevTheme = theme(i);
+    else
+        U1 = cpd_rnd(size_tens, R);
+        T1 = round(cpdgen(U1)*10);
+        T1 = reshape(T1, [1 size_tens]);
+        T0 = T0 + T1;
+    end
+    
+    U = cpd_rnd([split_size(i) size_tens], R);
 
     T = cpdgen(U);
     whos T T0
     T = T + T0;
 
-    ax = subplot(5,2,i);
     X = reshape(T, [1 10*20*30*split_size(i)]);
-    histfit(X, 20);
-    pd = fitdist(X', 'Normal')
     for j = 1:split_size(i)/5
         filename = strcat('data/data', num2str(num), '.tensor');
         fp = fopen(filename, 'w');

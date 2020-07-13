@@ -18,7 +18,7 @@ options.Refinement = false;
 size_tens = [1000 10 20 30];
 dims = [10 20 30 1000];
 R = 10;
-threshold = 2;
+threshold = 5;
 
 startFrame = 0;
 endFrame = 1000;
@@ -45,7 +45,7 @@ prevDrasticFrame = 1;
 
 for frame = 1:minibatchSize:numOfFrames
     t = frame;
-    fprintf('\n> %dth frame\n', frame+startFrame);
+    % fprintf('\n> %dth frame\n', frame+startFrame);
     endTime = min(frame+minibatchSize-1, numOfFrames);
     idx(end) = {frame:endTime};
     x = squeeze(T(idx{:}));
@@ -57,13 +57,13 @@ for frame = 1:minibatchSize:numOfFrames
     tic;
 
     if frame - prevDrasticFrame < tao-1
-        disp('continue.');
+        % disp('continue.');
         testFrame(t) = frame+startFrame;
         testRuntime(t) = toc;
         continue;
 
     elseif frame-prevDrasticFrame+1 == tao
-        disp('OnlineCP init! CP-ALS update!');
+        % disp('OnlineCP init! CP-ALS update!');
         initAs = cpd(Xt, R, options);
     
         [onlinePs, onlineQs] = onlineCP_initial_tenlab(Xt, initAs, R);
@@ -86,13 +86,13 @@ for frame = 1:minibatchSize:numOfFrames
             end
             testImgNormErr(t-tao+i) = frob(imgEst-imgOrg);
             if prevImgNormErr < testImgNormErr(t-tao+i)
-                prevImgNormErr = testImgNormErr(t-tao+i)
+                prevImgNormErr = testImgNormErr(t-tao+i);
             end
         end
         continue;
 
     else
-        disp('OnlineCP update!');
+        % disp('OnlineCP update!');
         [onlineAs, onlinePs, onlineQs, onlineAlpha] = onlineCP_update(x, onlineAs, onlinePs, onlineQs);
         onlineAs_N(end+1,:) = onlineAlpha;
         Uest = [onlineAs'; {onlineAs_N}];
@@ -107,29 +107,29 @@ for frame = 1:minibatchSize:numOfFrames
         testImgNormErr1(t) = frob(imgEst-imgOrg);
     
         % print log
-        [prevImgNormErr, testImgNormErr1(t)]
+        % [prevImgNormErr, testImgNormErr1(t)]
     
         if prevImgNormErr*threshold < testImgNormErr1(t)
-            disp('Drastic scene detected. CP-ALS update triggered!');
+            disp(strcat(num2str(frame), 'Drastic scene detected. CP-ALS update triggered!'));
             prevDrasticFrame = frame;
             testFrame(t) = frame+startFrame;
             testRuntime(t) = toc;
             prevImgNormErr = 0;
         end
     end
-    toc;
+    % toc;
 
     testFrame(t) = frame+startFrame;
     testRuntime(t) = toc;
     testImgNormErr(t) = frob(imgEst-imgOrg);
     if prevImgNormErr < testImgNormErr(t)
-        prevImgNormErr = testImgNormErr(t)
+        prevImgNormErr = testImgNormErr(t);
     end
 end
 whos As1 As2 As3 As4
 
 fileID = fopen('result.txt','w');
 testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
-result = sprintf('%d\t%.4f\t%.f\t%.f\n', testRuntime_Fitness')
+result = sprintf('%d\t%.4f\t%.f\t%.f\n', testRuntime_Fitness');
 fprintf(fileID, '%s', result);
 fclose(fileID);
