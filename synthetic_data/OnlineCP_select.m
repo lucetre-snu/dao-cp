@@ -4,7 +4,12 @@ addpath('../packages/onlineCP');
 warning('off', 'all');
 
 % OnlineCP w. select in synthetic data
-% OnlineCP_select
+
+
+% method="OnlineCP_select"; OnlineCP_select
+% method="OnlineCP_trigger"; OnlineCP_select
+% method="OnlineCP_split"; OnlineCP_select
+% method="OnlineCP"; OnlineCP_select
 
 currentPath = fileparts(mfilename('fullpath'));
 options.Display = false; % Show progress on the command line.
@@ -15,30 +20,48 @@ options.AlgorithmOptions.TolFun = 1e-12; % Set function tolerance stop criterion
 options.AlgorithmOptions.TolX   = 1e-12; % Set step size tolerance stop criterion
 options.Refinement = false;
 
-size_tens = [1000 10 20 30];
-dims = [10 20 30 1000];
-R = 10;
-update_threshold = 2;
-split_threshold = 5;
-
 startFrame = 0;
 endFrame = 1000;
 numOfFrames = endFrame - startFrame;
+
+size_tens = [numOfFrames 10 20 30];
+dims = [10 20 30 numOfFrames];
+R = 10;
+
+if method == "OnlineCP_select"
+    update_threshold = 20;
+    split_threshold = 500;
+elseif method == "OnlineCP_trigger"
+    update_threshold = 20;
+    split_threshold = 9999;
+elseif method == "OnlineCP_split"
+    update_threshold = 9999;
+    split_threshold = 500;
+elseif method == "OnlineCP"
+    update_threshold = 9999;
+    split_threshold = 9999;
+end
+
+
 tao = 5;
 iterFrame = 5;
 T = NaN(dims);
+errNormHistory = strings([1 numOfFrames]);
 minibatchSize = 1;
 
+tic;
 for i = startFrame/iterFrame:endFrame/iterFrame-1
-    tensorFile = fopen(strcat(currentPath, '/data/data', num2str(i), '.tensor'), 'r');
-    tic;
+    tensorFile = fopen(strcat(currentPath, '/data_normal/data', num2str(i), '.tensor'), 'r');
+    % tensorFile = fopen(strcat(currentPath, '/data_factor/data', num2str(i), '.tensor'), 'r');
     X = fscanf(tensorFile, "%d %d %d %d %f", [5, inf]);
     for row = X
-        T(row(2), row(3), row(4), row(1)) = row(5);
+        T(row(2), row(3), row(4), row(1)-startFrame) = row(5);
     end
     fclose(tensorFile);
-    toc;
 end
+toc;
+
+whos T
 
 
 idx = repmat({':'}, 1, length(dims));
@@ -57,7 +80,7 @@ for frame = 1:minibatchSize:numOfFrames
 
     tic;
 
-    if frame - prevDrasticFrame < tao-1
+    if frame-prevDrasticFrame < tao-1
         % disp('continue.');
         testFrame(t) = frame+startFrame;
         testRuntime(t) = toc;
@@ -78,18 +101,27 @@ for frame = 1:minibatchSize:numOfFrames
         testRuntime(t) = toc;
 
         prevImgNormErr = 0;
+        maxErrNormTol = 0;
         for i = 1:tao
             prevFrame = frame-prevDrasticFrame+1-tao+i;
             imgEst = squeeze(Test(:, :, :, prevFrame));
             imgOrg = squeeze(Xt(:, :, :, prevFrame));
-            if i > 1
-                testImgNormErr1(t-tao+i) = frob(imgEst-imgOrg);
-            end
             testImgNormErr(t-tao+i) = frob(imgEst-imgOrg);
+            errNormHistory(t-tao+i) = sprintf("%.f\t%s", frob(imgEst-imgOrg), errNormHistory(t-tao+i));
+
+            % if t > 1
+            %     errNormTol = testImgNormErr(t)-testImgNormErr(t-1);
+            %     if maxErrNormTol < errNormTol
+            %         maxErrNormTol = errNormTol;
+            %     end
+            % end
+
             if prevImgNormErr < testImgNormErr(t-tao+i)
                 prevImgNormErr = testImgNormErr(t-tao+i);
             end
         end
+
+
         continue;
 
     else
@@ -105,17 +137,53 @@ for frame = 1:minibatchSize:numOfFrames
     
         Test = cpdgen(Uest);
         imgEst = squeeze(Test(:, :, :, frame-prevDrasticFrame+1));
-        testImgNormErr1(t) = frob(imgEst-imgOrg);
-    
-        % print log
-        % [prevImgNormErr, testImgNormErr1(t)]
-    
-        if prevImgNormErr*split_threshold < testImgNormErr1(t)
-            disp(strcat(num2str(frame), 'Drastic scene detected. CP-ALS update triggered!'));
+        testImgNormErr(t) = frob(imgEst-imgOrg);
+        errNormHistory(t) = sprintf("%.f\t%s", frob(imgEst-imgOrg), errNormHistory(t));
+        
+        errNormTol = testImgNormErr(t)-testImgNormErr(t-1);
+        if split_threshold < errNormTol
+            disp(strcat(num2str(frame), 'OnlineCP-split triggered! Drastic scene detected.'));
+
+            errNormTol / maxErrNormTol
             prevDrasticFrame = frame;
             testFrame(t) = frame+startFrame;
             testRuntime(t) = toc;
             prevImgNormErr = 0;
+
+        elseif update_threshold < errNormTol
+            disp(strcat(num2str(frame), 'OnlineCP-update triggered! Similar scene detected.'));
+            disp(prevDrasticFrame);
+
+
+            disp('OnlineCP init! CP-ALS update!');
+            initAs = cpd(Xt, R, options);
+        
+            [onlinePs, onlineQs] = onlineCP_initial_tenlab(Xt, initAs, R);
+            onlineAs = initAs(1:end-1);
+            onlineAs_N = initAs{end};
+        
+            Uest = [onlineAs'; {onlineAs_N}];
+            Test = cpdgen(Uest);
+    
+            testFrame(t) = frame+startFrame;
+            testRuntime(t) = toc;
+    
+            prevImgNormErr = 0;
+            for i = prevDrasticFrame:frame
+                prevFrame = i-prevDrasticFrame+1;
+
+                imgEst = squeeze(Test(:, :, :, prevFrame));
+                imgOrg = squeeze(Xt(:, :, :, prevFrame));
+
+              
+                testImgNormErr(i) = frob(imgEst-imgOrg);
+                errNormHistory(i) = sprintf("%.f\t%s", frob(imgEst-imgOrg), errNormHistory(i));
+                if prevImgNormErr < testImgNormErr(i)
+                    prevImgNormErr = testImgNormErr(i);
+                end
+            end
+
+            continue;
         end
     end
     % toc;
@@ -123,14 +191,20 @@ for frame = 1:minibatchSize:numOfFrames
     testFrame(t) = frame+startFrame;
     testRuntime(t) = toc;
     testImgNormErr(t) = frob(imgEst-imgOrg);
+    % errNormHistory(t) = sprintf("%.f\t%s", frob(imgEst-imgOrg), errNormHistory(t));
     if prevImgNormErr < testImgNormErr(t)
         prevImgNormErr = testImgNormErr(t);
     end
+    % if maxErrNormTol < errNormTol
+    %     maxErrNormTol = errNormTol;
+    % end
 end
 % whos As1 As2 As3 As4
+filename = strcat('result/', method, '.txt');
+fileID = fopen(filename, 'w');
+whos testRuntime testImgNormErr errNormHistory
 
-fileID = fopen('result.txt','w');
-testRuntime_Fitness = [testFrame', testRuntime', testImgNormErr', testImgNormErr1'];
-result = sprintf('%d\t%.4f\t%.f\t%.f\n', testRuntime_Fitness');
-fprintf(fileID, '%s', result);
+for frame = 1:minibatchSize:numOfFrames
+    fprintf(fileID, '%d\t%.4f\t%s\n', frame, testRuntime(frame), errNormHistory(frame));
+end
 fclose(fileID);
