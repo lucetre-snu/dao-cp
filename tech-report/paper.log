@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  14 JUL 2020 18:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  15 JUL 2020 10:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -525,31 +525,41 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 631.
 LaTeX Info: Redefining \[ on input line 2735.
 LaTeX Info: Redefining \] on input line 2736.
 )
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
 (/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
 ) (./paper.aux)
 \openout1 = `paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
-LaTeX Font Info:    ... okay on input line 24.
-LaTeX Font Info:    Checking defaults for LUC/nanummj/m/n on input line 24.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
+LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for LUC/nanummj/m/n on input line 25.
 LaTeX Font Info:    Try loading font information for LUC+nanummj on input line 
-24.
+25.
 
 (/usr/share/texlive/texmf-dist/tex/latex/nanumtype1/lucnanummj.fd
 File: lucnanummj.fd 2013/02/12 v0.1 Nanum Myeongjo font definitions
 )
-LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    ... okay on input line 25.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -648,18 +658,27 @@ e
 \c@defn=\count114
 \c@algo=\count115
 \c@observation=\count116
-(./000abstract.tex) (./010intro.tex
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 6.
+LaTeX Font Info:    Try loading font information for U+msa on input line 61.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 61.
 
-(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (./000abstract.tex)
+(./010intro.tex
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 6.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 6.
-) (./020prelim.tex)
-[1
+)
+(./020prelim.tex) [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./030method.tex
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+(./030method.tex
 <FIG/Method-optimization.pdf, id=16, 670.00313pt x 330.48468pt>
 File: FIG/Method-optimization.pdf Graphic file (type pdf)
 
@@ -671,83 +690,73 @@ Package pdftex.def Info: FIG/Method-optimization.pdf used on input line 5.
 File: FIG/OnlineCP-trigger.png Graphic file (type png)
 
 <use FIG/OnlineCP-trigger.png>
-Package pdftex.def Info: FIG/OnlineCP-trigger.png used on input line 17.
+Package pdftex.def Info: FIG/OnlineCP-trigger.png used on input line 18.
 (pdftex.def)             Requested size: 399.2946pt x 414.49725pt.
  [3 <./FIG/OnlineCP-trigger.png>]
-<FIG/OnlineCP-split.png, id=48, 2334.7225pt x 1971.365pt>
+<FIG/OnlineCP-split.png, id=49, 2334.7225pt x 1971.365pt>
 File: FIG/OnlineCP-split.png Graphic file (type png)
 
 <use FIG/OnlineCP-split.png>
-Package pdftex.def Info: FIG/OnlineCP-split.png used on input line 25.
+Package pdftex.def Info: FIG/OnlineCP-split.png used on input line 26.
 (pdftex.def)             Requested size: 422.77661pt x 356.96611pt.
  [4 <./FIG/OnlineCP-split.png>]
-<FIG/OnlineCP-select.png, id=52, 2354.7975pt x 1967.35pt>
+<FIG/OnlineCP-select.png, id=53, 2354.7975pt x 1967.35pt>
 File: FIG/OnlineCP-select.png Graphic file (type png)
 
 <use FIG/OnlineCP-select.png>
-Package pdftex.def Info: FIG/OnlineCP-select.png used on input line 33.
+Package pdftex.def Info: FIG/OnlineCP-select.png used on input line 39.
 (pdftex.def)             Requested size: 422.77661pt x 353.20714pt.
 ) [5 <./FIG/OnlineCP-select.png>]
 (./040experiments.tex
+Overfull \hbox (53.83128pt too wide) in paragraph at lines 8--15
+[][] 
+ []
 
-LaTeX Warning: File `FIG/Online Tensor Analysis.pdf' not found on input line 13
-.
+<FIG/Comparison-analysis.pdf, id=58, 704.6325pt x 345.29pt>
+File: FIG/Comparison-analysis.pdf Graphic file (type pdf)
 
-<FIG/Online Tensor Analysis.pdf, id=57, 704.6325pt x 345.29pt>
-File: FIG/Online Tensor Analysis.pdf Graphic file (type pdf)
-
-<use FIG/Online Tensor Analysis.pdf>
-Package pdftex.def Info: FIG/Online Tensor Analysis.pdf used on input line 13.
+<use FIG/Comparison-analysis.pdf>
+Package pdftex.def Info: FIG/Comparison-analysis.pdf used on input line 21.
 (pdftex.def)             Requested size: 469.75499pt x 230.1945pt.
-
-
-LaTeX Warning: File `FIG/Speed Accuracy Comparison.pdf' not found on input line
- 17.
-
-<FIG/Speed Accuracy Comparison.pdf, id=58, 484.81125pt x 372.39125pt>
-File: FIG/Speed Accuracy Comparison.pdf Graphic file (type pdf)
-
-<use FIG/Speed Accuracy Comparison.pdf>
-Package pdftex.def Info: FIG/Speed Accuracy Comparison.pdf used on input line 1
-7.
-(pdftex.def)             Requested size: 328.82706pt x 252.59196pt.
-) (./050related.tex) [6 <./FIG/Online Tensor Analysis.pdf> <./FIG/Speed Accurac
-y Comparison.pdf
-
-pdfTeX warning: pdflatex (file ./FIG/Speed Accuracy Comparison.pdf): PDF inclus
-ion: multiple pdfs with page group included in a single page
->] (./060conclusions.tex)
+) (./050related.tex) (./060conclusions.tex)
 No file paper.bbl.
-[7] (./099appendix.tex) [8] (./paper.aux) ) 
+[6 <./FIG/Comparison-analysis.pdf>] (./099appendix.tex) [7] (./paper.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 3437 strings out of 493029
- 46160 string characters out of 6136234
- 120183 words of memory out of 5000000
- 6860 multiletter control sequences out of 15000+600000
- 11453 words of font info for 41 fonts, out of 8000000 for 9000
+ 3730 strings out of 493029
+ 49281 string characters out of 6136234
+ 120662 words of memory out of 5000000
+ 7132 multiletter control sequences out of 15000+600000
+ 15179 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,11n,23p,601b,232s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmcsc10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-mi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmtt12.pfb>
-Output written on paper.pdf (8 pages, 824503 bytes).
+ 38i,10n,26p,601b,232s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/symbols/msam10.pfb>
+Output written on paper.pdf (7 pages, 813373 bytes).
 PDF statistics:
- 157 PDF objects out of 1000 (max. 8388607)
- 108 compressed objects within 2 object streams
+ 154 PDF objects out of 1000 (max. 8388607)
+ 107 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 31 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 

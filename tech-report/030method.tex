@@ -7,10 +7,11 @@ We've developed our methods by extending the basic intuition of \ocp. Since dyna
 
 \newpage
 \subsection{\em OnlineCP-trigger}
-\textbf{Detection Approach}: \cpals activates whole temporal factor updates and enables high accuracy decomposition. Drastic data can be detected by calculating image error norm and its ratio between neighboring time steps. The moment for triggering \cpals is when temporal ratio of error norm for incoming data exceeds threshold.
+\textbf{Detection Approach}: \cpals activates whole temporal factor updates and enables high accuracy decomposition. Drastic data can be detected by calculating image error norm and its ratio between neighboring time steps. The moment for triggering \cpals is when temporal ratio of error norm for incoming data exceeds threshold ${\theta}_{update}$.
 
 \begin{align*}
-    threshold < \frac{\norm{\tilde{\chi}_{i+1}-\chi_{i+1}}}{\norm{\tilde{\chi}_{i}-\chi_{i}}}
+%    \theta < \frac{\norm{\tilde{\chi}_{i}-\chi_{i}}}{\norm{\tilde{\chi}_{i-1}-\chi_{i-1}}}
+    {\theta}_{update} < \norm{\tilde{\chi}_{i}-\chi_{i}}-\norm{\tilde{\chi}_{i-1}-\chi_{i-1}} 
 \end{align*}
 
 \begin{center}
@@ -27,7 +28,12 @@ We've developed our methods by extending the basic intuition of \ocp. Since dyna
 
 \newpage
 \subsection{\em OnlineCP-select}
-\textbf{Selection Approach}: Similarly to split approach, trigger function now decides whether to split or to concatenate behind after one temporal factor update. It allows to store the tensor efficiently; group tensors with similar themes and split them otherwise. (e.g. $A$, $B$, $B'$, $C$)
+\textbf{Selection Approach}: Similarly to split approach, trigger function now decides whether to split or to concatenate behind after one temporal factor update. It allows to store the tensor efficiently by grouping tensors with similar themes and splitting them otherwise. (e.g. $A$, $B$, $B'$, $C$)
+
+\begin{align*}
+    {\theta}_{update} < \norm{\tilde{\chi}_{i}-\chi_{i}}-\norm{\tilde{\chi}_{i-1}-\chi_{i-1}} <{\theta}_{split} \\
+    \norm{\tilde{\chi}_{i}-\chi_{i}}-\norm{\tilde{\chi}_{i-1}-\chi_{i-1}} \geqslant {\theta}_{split}
+\end{align*}
 
 \begin{center}
 	\includegraphics[width=0.9\textwidth]{FIG/OnlineCP-select.png}
