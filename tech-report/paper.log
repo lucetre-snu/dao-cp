@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  15 JUL 2020 10:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2020.6.10)  31 AUG 2020 17:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -658,11 +658,11 @@ e
 \c@defn=\count114
 \c@algo=\count115
 \c@observation=\count116
-LaTeX Font Info:    Try loading font information for U+msa on input line 61.
+LaTeX Font Info:    Try loading font information for U+msa on input line 63.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 61.
+LaTeX Font Info:    Try loading font information for U+msb on input line 63.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -679,84 +679,112 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 (./030method.tex
-<FIG/Method-optimization.pdf, id=16, 670.00313pt x 330.48468pt>
-File: FIG/Method-optimization.pdf Graphic file (type pdf)
+<FIG/0-online-tensor-decomposition.pdf, id=16, 547.2947pt x 173.89969pt>
+File: FIG/0-online-tensor-decomposition.pdf Graphic file (type pdf)
 
-<use FIG/Method-optimization.pdf>
-Package pdftex.def Info: FIG/Method-optimization.pdf used on input line 5.
-(pdftex.def)             Requested size: 469.75499pt x 231.71086pt.
- [2 <./FIG/Method-optimization.pdf>]
-<FIG/OnlineCP-trigger.png, id=37, 1383.66937pt x 1436.36626pt>
-File: FIG/OnlineCP-trigger.png Graphic file (type png)
+<use FIG/0-online-tensor-decomposition.pdf>
+Package pdftex.def Info: FIG/0-online-tensor-decomposition.pdf used on input li
+ne 6.
+(pdftex.def)             Requested size: 375.80542pt x 119.41243pt.
+ [2 <./FIG/0-online-tensor-decomposition.pdf>] <FIG/0-drastic-data-handling.pdf
+, id=40, 547.2947pt x 310.15875pt>
+File: FIG/0-drastic-data-handling.pdf Graphic file (type pdf)
 
-<use FIG/OnlineCP-trigger.png>
-Package pdftex.def Info: FIG/OnlineCP-trigger.png used on input line 18.
-(pdftex.def)             Requested size: 399.2946pt x 414.49725pt.
- [3 <./FIG/OnlineCP-trigger.png>]
-<FIG/OnlineCP-split.png, id=49, 2334.7225pt x 1971.365pt>
-File: FIG/OnlineCP-split.png Graphic file (type png)
+<use FIG/0-drastic-data-handling.pdf>
+Package pdftex.def Info: FIG/0-drastic-data-handling.pdf used on input line 22.
 
-<use FIG/OnlineCP-split.png>
-Package pdftex.def Info: FIG/OnlineCP-split.png used on input line 26.
-(pdftex.def)             Requested size: 422.77661pt x 356.96611pt.
- [4 <./FIG/OnlineCP-split.png>]
-<FIG/OnlineCP-select.png, id=53, 2354.7975pt x 1967.35pt>
-File: FIG/OnlineCP-select.png Graphic file (type png)
+(pdftex.def)             Requested size: 375.80542pt x 212.97804pt.
 
-<use FIG/OnlineCP-select.png>
-Package pdftex.def Info: FIG/OnlineCP-select.png used on input line 39.
-(pdftex.def)             Requested size: 422.77661pt x 353.20714pt.
-) [5 <./FIG/OnlineCP-select.png>]
-(./040experiments.tex
-Overfull \hbox (53.83128pt too wide) in paragraph at lines 8--15
+<FIG/1-online-tensor-decomposition.pdf, id=41, 464.4853pt x 440.39531pt>
+File: FIG/1-online-tensor-decomposition.pdf Graphic file (type pdf)
+
+<use FIG/1-online-tensor-decomposition.pdf>
+Package pdftex.def Info: FIG/1-online-tensor-decomposition.pdf used on input li
+ne 32.
+(pdftex.def)             Requested size: 230.18251pt x 218.24834pt.
+
+<FIG/1-drastic-data-handling.pdf, id=42, 464.4853pt x 440.39531pt>
+File: FIG/1-drastic-data-handling.pdf Graphic file (type pdf)
+
+<use FIG/1-drastic-data-handling.pdf>
+Package pdftex.def Info: FIG/1-drastic-data-handling.pdf used on input line 33.
+
+(pdftex.def)             Requested size: 230.18251pt x 218.24834pt.
+ [3 <./FIG/0-drastic-data-handling.pdf>])
+[4 <./FIG/1-online-tensor-decomposition.pdf> <./FIG/1-drastic-data-handling.pdf
+
+
+pdfTeX warning: pdflatex (file ./FIG/1-drastic-data-handling.pdf): PDF inclusio
+n: multiple pdfs with page group included in a single page
+>] (./040experiments.tex
+Overfull \hbox (53.83128pt too wide) in paragraph at lines 26--33
 [][] 
  []
 
-<FIG/Comparison-analysis.pdf, id=58, 704.6325pt x 345.29pt>
-File: FIG/Comparison-analysis.pdf Graphic file (type pdf)
+[5] <FIG/sample_video_error_norm.png, id=103, 433.62pt x 289.08pt>
+File: FIG/sample_video_error_norm.png Graphic file (type png)
 
-<use FIG/Comparison-analysis.pdf>
-Package pdftex.def Info: FIG/Comparison-analysis.pdf used on input line 21.
-(pdftex.def)             Requested size: 469.75499pt x 230.1945pt.
-) (./050related.tex) (./060conclusions.tex)
+<use FIG/sample_video_error_norm.png>
+Package pdftex.def Info: FIG/sample_video_error_norm.png used on input line 66.
+
+(pdftex.def)             Requested size: 230.18251pt x 153.45427pt.
+
+<FIG/sample_video_running_time.png, id=105, 433.62pt x 289.08pt>
+File: FIG/sample_video_running_time.png Graphic file (type png)
+
+<use FIG/sample_video_running_time.png>
+Package pdftex.def Info: FIG/sample_video_running_time.png used on input line 6
+7.
+(pdftex.def)             Requested size: 230.18251pt x 153.45427pt.
+
+<FIG/stock_error_norm.png, id=106, 433.62pt x 289.08pt>
+File: FIG/stock_error_norm.png Graphic file (type png)
+
+<use FIG/stock_error_norm.png>
+Package pdftex.def Info: FIG/stock_error_norm.png used on input line 73.
+(pdftex.def)             Requested size: 230.18251pt x 153.45427pt.
+
+<FIG/stock_running_time.png, id=107, 433.62pt x 289.08pt>
+File: FIG/stock_running_time.png Graphic file (type png)
+
+<use FIG/stock_running_time.png>
+Package pdftex.def Info: FIG/stock_running_time.png used on input line 74.
+(pdftex.def)             Requested size: 230.18251pt x 153.45427pt.
+) [6 <./FIG/sample_video_error_norm.png> <./FIG/sample_video_running_time.png> 
+<./FIG/stock_error_norm.png> <./FIG/stock_running_time.png>] (./050related.tex)
+ (./060conclusions.tex)
 No file paper.bbl.
-[6 <./FIG/Comparison-analysis.pdf>] (./099appendix.tex) [7] (./paper.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+[7] (./099appendix.tex) [8] (./paper.aux) ) 
 Here is how much of TeX's memory you used:
- 3730 strings out of 493029
- 49281 string characters out of 6136234
- 120662 words of memory out of 5000000
- 7132 multiletter control sequences out of 15000+600000
+ 3747 strings out of 493029
+ 49968 string characters out of 6136234
+ 121662 words of memory out of 5000000
+ 7146 multiletter control sequences out of 15000+600000
  15179 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,10n,26p,601b,232s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/symbols/msam10.pfb>
-Output written on paper.pdf (7 pages, 813373 bytes).
+ 38i,9n,26p,601b,240s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmcsc10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+mi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
+12.pfb>
+Output written on paper.pdf (8 pages, 1513048 bytes).
 PDF statistics:
- 154 PDF objects out of 1000 (max. 8388607)
- 107 compressed objects within 2 object streams
+ 181 PDF objects out of 1000 (max. 8388607)
+ 121 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
 
