@@ -1,5 +1,6 @@
 import time
 import math
+import sys
 import numpy as np
 import tensorly as tl
 from tensorly.decomposition import parafac
@@ -59,7 +60,17 @@ def compare_tensors(A, B):
     print('||A-B||:', error_norm)
     return error_norm
     
-def create_tensor_stream(X, start_to_stream, batch_sizes):
+def create_tensor_stream(X, start_to_stream, batch_sizes=[]):
+    if start_to_stream < 0:
+        batch_size = int(-start_to_stream)
+        start_to_stream = X.shape[0] % batch_size
+        if start_to_stream == 0:
+            start_to_stream = batch_size
+            batch_sizes = np.full(((X.shape[0]-batch_size) // batch_size), batch_size, dtype=int)
+        else:
+            batch_sizes = np.full((X.shape[0] // batch_size), batch_size, dtype=int)
+        print(start_to_stream, batch_sizes)
+    
     total_batch_size = np.sum(batch_sizes)
     if X.shape[0] != start_to_stream + total_batch_size:
         raise ValueError('Total batch size should be the size of streaming part of the tensor.')
@@ -312,6 +323,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
     
     for method in methods:
 
+        mem_usage = sys.getsizeof(X_stream[0])
         print('\n >> {} rank-{} n_iter-{}'.format(method, rank, n_iter))
         
         factors = factors_old
@@ -320,14 +332,17 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
         if not method in ['dao', 'dtd', 'ocp', 'fcp']:
             raise ValueError('The method does not exist.')  
         if method == 'fcp':
+            mem_usage = sys.getsizeof(X_stream)
             (weights, factors) = parafac(X, rank, init='random')
+            mem_usage += sys.getsizeof(factors)
             X_est = construct_tensor(factors)
             err_norm = tl.norm(X - X_est)
             global_rt = time.time()-start
             global_fit = 1 - (err_norm/tl.norm(X))
             print('global fitness', global_fit)
             print('global running time', global_rt)
-            results[method] = [global_fit, 0, global_rt, 0]
+            print('memory usage', mem_usage)
+            results[method] = [global_fit, 0, global_rt, 0, mem_usage]
             continue
 
         ktensors = []
@@ -356,10 +371,14 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
                 P[mode] = tl.dot(tl.unfold(X_old, mode), tl.tenalg.khatri_rao((factors[0], K[mode])))
                 Q[mode] = H / tl.dot(tl.transpose(factors[mode]), factors[mode])
             #print('init_time:', time.time()-start)
-
+            mem_usage += sys.getsizeof(K)
+            mem_usage += sys.getsizeof(H)
+            mem_usage += sys.getsizeof(P)
+            mem_usage += sys.getsizeof(Q)
         
+        iter_mem_usage = 0
         for i, X_new in enumerate(X_stream[1:]):
-
+            i_mem = sys.getsizeof(X_new)
             start = time.time()
             if method == 'dao':
                 (weights, factors0) = adaptive_online_cp(factors.copy(), X_old, X_new, rank, n_iter=n_iter, mu=0.8, verbose=False)
@@ -370,6 +389,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
 
             U = factors0.copy()
             U[0] = U[0][-X_new.shape[0]-1:-1]
+            i_mem += sys.getsizeof(U)
             dX_est = construct_tensor(U)
 
             err_norm = tl.norm(X_new - dX_est)
@@ -388,6 +408,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
                 #print('making init decomposition result:', time.time()-start)
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
 
+                i_mem += sys.getsizeof(factors0)
                 start = time.time()
                 X_est = construct_tensor(factors0)
                 err_norm = tl.norm(X_old - X_est)
@@ -411,6 +432,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
 
                 (weights, factors) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=n_iter*2, mu=0.1, verbose=False)
                 
+                i_mem += sys.getsizeof(factors)
                 U = factors.copy()
                 U[0] = U[0][-X_new.shape[0]-1:-1]
                 dX_est = construct_tensor(U)
@@ -429,13 +451,16 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             fitness.append(err_norm/tl.norm(X_new))
             running_time.append(elapsed_time)
             X_old = tl.concatenate((X_old, X_new))
-
+            iter_mem_usage = max(iter_mem_usage, i_mem)
             if verbose:
                 X_est = construct_tensor(factors)
                 compare_tensors(X_old, X_est)
 
+        mem_usage += iter_mem_usage
+        
         weights = tl.ones(rank)
         ktensors.append(KruskalTensor((weights, factors)))
+        mem_usage += sys.getsizeof(ktensors)
         
 #     return (ktensors, np.asarray(verbose_list))
         global_rt = time.time() - begin
@@ -462,6 +487,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             print('local fitness', local_fit)
             print('global running time', global_rt)
             print('local running time', local_rt)
-            results[method] = [global_fit, local_fit, global_rt, local_rt]
+            print('memory usage', mem_usage)
+            results[method] = [global_fit, local_fit, global_rt, local_rt, mem_usage, verbose_list, (split_points, refine_points)]
             
     return results
