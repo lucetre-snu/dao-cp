@@ -313,6 +313,7 @@ def get_z_score(x, mean, std):
         return 0
     return (x - mean) / std
 
+
 def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=-1, verbose=False, methods=['dao', 'dtd', 'ocp', 'fcp']):
     results = {}
     start = time.time()
@@ -342,7 +343,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             print('global fitness', global_fit)
             print('global running time', global_rt)
             print('memory usage', mem_usage)
-            results[method] = [global_fit, 0, global_rt, 0, mem_usage]
+            results[method] = [global_fit, 0, global_rt, 0, mem_usage, X_est]
             continue
 
         ktensors = []
@@ -430,7 +431,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
                 elapsed_time = time.time()-start
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
 
-                (weights, factors) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=n_iter*2, mu=0.1, verbose=False)
+                (weights, factors) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=n_iter*2, mu=0.5, verbose=False)
                 
                 i_mem += sys.getsizeof(factors)
                 U = factors.copy()
@@ -488,6 +489,6 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             print('global running time', global_rt)
             print('local running time', local_rt)
             print('memory usage', mem_usage)
-            results[method] = [global_fit, local_fit, global_rt, local_rt, mem_usage, verbose_list, (split_points, refine_points)]
+            results[method] = [global_fit, local_fit, global_rt, local_rt, mem_usage, verbose_list, (split_points, refine_points), tensor_est]
             
     return results
