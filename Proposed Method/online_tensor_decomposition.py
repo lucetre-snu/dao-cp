@@ -333,7 +333,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
         if not method in ['dao', 'dtd', 'ocp', 'fcp']:
             raise ValueError('The method does not exist.')  
         if method == 'fcp':
-            mem_usage = sys.getsizeof(X_stream)
+            mem_usage = sys.getsizeof(X)
             (weights, factors) = parafac(X, rank, init='random')
             mem_usage += sys.getsizeof(factors)
             X_est = construct_tensor(factors)
