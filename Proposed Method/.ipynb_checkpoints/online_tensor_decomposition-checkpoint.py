@@ -129,6 +129,7 @@ def get_Hadamard(factors):
 
 
 def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=False, transformed=False):
+    mem = 0
     weights = tl.ones(rank)
     if verbose:
         X = tl.tensor(np.concatenate((X_old, X_new)))
@@ -138,6 +139,8 @@ def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=Fal
     if not transformed:
         K = get_KhatriRao_except0(factors_old)
     H = get_Hadamard(factors_old[1:])
+    mem += sys.getsizeof(K)
+    mem += sys.getsizeof(H)
         
     for i in range(n_iter):
         # temporal mode for A1
@@ -160,6 +163,9 @@ def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=Fal
                 dP = tl.dot(tl.unfold(X_new, mode), tl.tenalg.khatri_rao((A1, K[mode])))
                 UTU  = tl.dot(tl.transpose(U[mode]), U[mode])
                 dQ = tl.dot(tl.transpose(A1), A1) * H / UTU
+                mem += sys.getsizeof(dP)
+                mem += sys.getsizeof(UTU)
+                mem += sys.getsizeof(dQ)
                 
                 U[mode] = tl.transpose(tl.solve(tl.transpose(mu*Q[mode] + dQ), tl.transpose(mu*P[mode] + dP)))
                 P[mode] = P[mode] + dP
@@ -189,11 +195,11 @@ def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=Fal
             compare_tensors(X, X_est)
 
     U[0] = np.concatenate((U[0], A1))
-    return (KruskalTensor((weights, U)), P, Q)
+    return (KruskalTensor((weights, U)), P, Q, mem)
 
 
 def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
-    
+    mem = 0
     weights = tl.ones(rank)
     if verbose:
         X = tl.tensor(np.concatenate((X_old, X_new)))
@@ -207,6 +213,7 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
             if j != 0:
                 V = V * tl.dot(tl.transpose(factor), factor)
         mttkrp = unfolding_dot_khatri_rao(X_new, (None, U), 0)
+        mem += sys.getsizeof(mttkrp)
         A1 = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp)))
 
         # non-temporal mode
@@ -225,6 +232,8 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
                         V = V * tl.dot(tl.transpose(factor), factor)
             mttkrp0 = mu * tl.dot(factors_old[mode], W)
             mttkrp1 = unfolding_dot_khatri_rao(X_new, (None, U1), mode)
+            mem += sys.getsizeof(mttkrp0)
+            mem += sys.getsizeof(mttkrp1)
             U[mode] = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp0 + mttkrp1)))
 
         # temporal mode for A0
@@ -236,6 +245,7 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
                 V = V * tl.dot(tl.transpose(factor), factor)
                 W = W * tl.dot(tl.transpose(factor_old), factor)
         mttkrp = tl.dot(factors_old[0], W)
+        mem += sys.getsizeof(mttkrp)
         U[0] = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp)))
         if verbose:
             U1 = U.copy()
@@ -244,11 +254,11 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
             compare_tensors(X, X_est)
 
     U[0] = np.concatenate((U[0].copy(), A1))
-    return KruskalTensor((weights, U))
+    return (KruskalTensor((weights, U)), mem)
 
 
 def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
-    
+    mem = 0
     weights = tl.ones(rank)
     if verbose:
         X = tl.tensor(np.concatenate((X_old, X_new)))
@@ -260,6 +270,11 @@ def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=
     
     ATA0 = tl.dot(tl.transpose(U[0]), U[0])
     ATA1 = tl.dot(tl.transpose(U[1]), U[1])
+    
+    mem += sys.getsizeof(ATA0)
+    mem += sys.getsizeof(ATA1)
+    mem += sys.getsizeof(G)
+    mem += sys.getsizeof(H)
     
     for i in range(n_iter):        
         # temporal mode for A1
@@ -303,7 +318,7 @@ def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=
             compare_tensors(X, X_est)
 
     U[0] = np.concatenate((U[0].copy(), A1))
-    return KruskalTensor((weights, U))
+    return (KruskalTensor((weights, U)), mem)
 
 
 from warnings import warn
@@ -382,15 +397,16 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             i_mem = sys.getsizeof(X_new)
             start = time.time()
             if method == 'dao':
-                (weights, factors0) = adaptive_online_cp(factors.copy(), X_old, X_new, rank, n_iter=n_iter, mu=0.8, verbose=False)
+                ((weights, factors0), mem) = adaptive_online_cp(factors.copy(), X_old, X_new, rank, n_iter=n_iter, mu=0.8, verbose=False)
             elif method == 'ocp':
-                ((weights, factors0), P0, Q0) = online_cp(factors.copy(), X_old, X_new, rank, P, Q, verbose=False)
+                ((weights, factors0), P0, Q0, mem) = online_cp(factors.copy(), X_old, X_new, rank, P, Q, verbose=False)
             elif method == 'dtd':
-                (weights, factors0) = dtd(factors.copy(), X_old, X_new, rank, verbose=False)
-
+                ((weights, factors0), mem) = dtd(factors.copy(), X_old, X_new, rank, verbose=False)
+            
+            i_mem += mem
             U = factors0.copy()
-            U[0] = U[0][-X_new.shape[0]-1:-1]
             i_mem += sys.getsizeof(U)
+            U[0] = U[0][-X_new.shape[0]-1:-1]
             dX_est = construct_tensor(U)
 
             err_norm = tl.norm(X_new - dX_est)
@@ -431,8 +447,9 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
                 elapsed_time = time.time()-start
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
 
-                (weights, factors) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=n_iter*2, mu=0.5, verbose=False)
+                ((weights, factors), mem) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=n_iter*2, mu=0.5, verbose=False)
                 
+                i_mem += mem
                 i_mem += sys.getsizeof(factors)
                 U = factors.copy()
                 U[0] = U[0][-X_new.shape[0]-1:-1]
