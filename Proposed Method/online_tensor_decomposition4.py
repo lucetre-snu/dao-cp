@@ -146,6 +146,7 @@ def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=Fal
         # temporal mode for A1
         if not transformed:
             mttkrp = tl.dot(tl.unfold(X_new, 0), tl.tenalg.khatri_rao((U[1], K[1])))
+            mem += sys.getsizeof(mttkrp)
         else:
             # for higher accracy, lower speed
             mttkrp_parts = []
@@ -160,9 +161,11 @@ def online_cp(factors_old, X_old, X_new, rank, P, Q, n_iter=1, mu=1, verbose=Fal
         for mode in range(1, n_dim):
             
             if not transformed:
-                dP = tl.dot(tl.unfold(X_new, mode), tl.tenalg.khatri_rao((A1, K[mode])))
+                dK = tl.tenalg.khatri_rao((A1, K[mode]))
+                dP = tl.dot(tl.unfold(X_new, mode), dK)
                 UTU  = tl.dot(tl.transpose(U[mode]), U[mode])
                 dQ = tl.dot(tl.transpose(A1), A1) * H / UTU
+                mem += sys.getsizeof(dK)
                 mem += sys.getsizeof(dP)
                 mem += sys.getsizeof(UTU)
                 mem += sys.getsizeof(dQ)
@@ -213,7 +216,8 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
             if j != 0:
                 V = V * tl.dot(tl.transpose(factor), factor)
         mttkrp = unfolding_dot_khatri_rao(X_new, (None, U), 0)
-        mem += sys.getsizeof(mttkrp)
+        if i == 0:
+            mem += sys.getsizeof(mttkrp)
         A1 = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp)))
 
         # non-temporal mode
@@ -232,8 +236,9 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
                         V = V * tl.dot(tl.transpose(factor), factor)
             mttkrp0 = mu * tl.dot(factors_old[mode], W)
             mttkrp1 = unfolding_dot_khatri_rao(X_new, (None, U1), mode)
-            mem += sys.getsizeof(mttkrp0)
-            mem += sys.getsizeof(mttkrp1)
+            if i == 0:
+                mem += sys.getsizeof(mttkrp0)
+                mem += sys.getsizeof(mttkrp1)
             U[mode] = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp0 + mttkrp1)))
 
         # temporal mode for A0
@@ -245,7 +250,8 @@ def dtd(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=False):
                 V = V * tl.dot(tl.transpose(factor), factor)
                 W = W * tl.dot(tl.transpose(factor_old), factor)
         mttkrp = tl.dot(factors_old[0], W)
-        mem += sys.getsizeof(mttkrp)
+        if i == 0:
+            mem += sys.getsizeof(mttkrp)
         U[0] = tl.transpose(tl.solve(tl.transpose(V), tl.transpose(mttkrp)))
         if verbose:
             U1 = U.copy()
@@ -283,11 +289,14 @@ def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=
             component = tl.tenalg.multi_mode_dot(X_new, [f[:, r] for f in U], skip=0)
             mttkrp_parts.append(component)
         mttkrp = np.stack(mttkrp_parts, axis=1)
+        if i == 0:
+            mem += sys.getsizeof(mttkrp)
         
         A1 = tl.transpose(tl.solve(tl.transpose(H), tl.transpose(mttkrp)))
         ATA1 = tl.dot(tl.transpose(A1), A1)
-        
-        
+        if i == 0:
+            mem += sys.getsizeof(A1)
+
         # non-temporal mode
         for mode in range(1, n_dim):
             
@@ -298,6 +307,11 @@ def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=
             W = G * tl.dot(tl.transpose(factors_old[0]), U[0])
             mttkrp0 = mu * tl.dot(factors_old[mode], W)
             mttkrp1 = unfolding_dot_khatri_rao(X_new, (None, U1), mode)
+            if i == 0:
+                mem += sys.getsizeof(G)
+                mem += sys.getsizeof(W)
+                mem += sys.getsizeof(mttkrp0)
+                mem += sys.getsizeof(mttkrp1)
             
             H = H / tl.dot(tl.transpose(U[mode]), U[mode])
             V = H * (mu * ATA0 + ATA1)
@@ -308,6 +322,8 @@ def adaptive_online_cp(factors_old, X_old, X_new, rank, n_iter=1, mu=1, verbose=
 
         # temporal mode for A0        
         mttkrp = tl.dot(factors_old[0], G)
+        if i == 0:
+            mem += sys.getsizeof(mttkrp)
         U[0] = tl.transpose(tl.solve(tl.transpose(H), tl.transpose(mttkrp)))
         ATA0 = tl.dot(tl.transpose(U[0]), U[0])
 
