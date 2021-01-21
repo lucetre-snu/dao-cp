@@ -1,0 +1,30 @@
+- Name: KOSPI140
+
+- Source: DeepTrade database at 'gogh.snu.ac.kr'
+	
+- Mode: 3
+
+- Format: 
+	Stock.tensor: <stock_id> <date> <feature> (values)
+	
+- Dimension: 
+	Stock.tensor: 140 * 3,089 * 5
+	
+- Number of entities:
+	Stock.tensor: 2,162,300
+	
+- Description:
+140 stocks values from KOSPI 200 (listing on June 30, 2020) existing from Jan 2, 2008 to June 30, 2020.
+Features consist of (adjusted_opening_price / one trading day earlier adjusted_opening_price), (adjusted_highest_price / one trading day earlier adjusted_highest_price), (adjusted_lowest_price / one trading day earlier adjusted_lowest_price), (adjusted_closing_price / one trading day earlier adjusted_closing_price), and trading_volume_divided_by_number_of_shares.
+Dataset statistics
+Number of stocks	140
+Number of dates	3,089
+Number of features	5
+Timespan	Jan 3, 2008 - June 30, 2020
+	
+- stock_dic: stock ID dictionary
+
+- date_dic: date dictionary
+
+- feature_dic: feature dictionary
+

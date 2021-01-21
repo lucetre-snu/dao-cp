@@ -1,0 +1,5 @@
+0	adjusted_opening_price / one trading day earlier adjusted_closing_price - 1
+1	adjusted_highest_price / one trading day earlier adjusted_closing_price - 1
+2	adjusted_lowest_price / one trading day earlier adjusted_closing_price - 1
+3	adjusted_closing_price / one trading day earlier adjusted_closing_price - 1
+4	trading_volume_divided_by_number_of_shares
