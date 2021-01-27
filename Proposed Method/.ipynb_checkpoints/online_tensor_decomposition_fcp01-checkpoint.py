@@ -347,14 +347,16 @@ def get_z_score(x, mean, std):
 
 def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=-1, verbose=False, methods=['dao', 'dtd', 'ocp', 'fcp']):
     results = {}
-    start = time.time()
-    (weights, factors_old) = parafac(X_stream[0], rank, init='random')
-    print('-----------------------------------')
-    init_time = time.time()-start
-    print('making init decomposition result:', init_time)
     
     for method in methods:
-
+        start = time.time()
+        (weights, factors_old) = parafac(X_stream[0], rank, init='random')
+        print('-----------------------------------')
+        init_time = time.time()-start
+        print('making init decomposition result:', init_time)
+        X_est = construct_tensor(factors_old)
+        err_norm = tl.norm(X_stream[0] - X_est)
+    
         mem_usage = sys.getsizeof(X_stream[0])
         print('\n >> {} rank-{} n_iter-{}'.format(method, rank, n_iter))
         
@@ -365,38 +367,31 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             raise ValueError('The method does not exist.')  
 
         ktensors = []
-        verbose_list = []
         split_points = []
         refine_points = []
         fitness = []
+        verbose_list = []
+        verbose_list.append([1, init_time, err_norm, 0])
         running_time = []
         
-        
+        length = X_old.shape[0]
         if method == 'fcp':
             
-            start = time.time()
-            (weights, factors) = parafac(X_old, rank, init='random')
-            X_est = construct_tensor(factors)
-
-            elapsed_time = time.time()-start
-            err_norm = tl.norm(X_est - X_old)
-            print('0th_iter:', elapsed_time, 1-(err_norm/tl.norm(X_old)))
-            verbose_list.append([i+1, elapsed_time, err_norm, 0])
-            fitness.append(1-(err_norm/tl.norm(X_old)))
-            running_time.append(elapsed_time)
-            
-            start = time.time()
-            mem_usage = sys.getsizeof(X)
-            (weights, factors) = parafac(X, rank, init='random')
-            elapsed_time = time.time()-start
-            mem_usage += sys.getsizeof(factors)
-            X_est = construct_tensor(factors)
-            err_norm = tl.norm(X - X_est)
-            print('-1th_iter:', elapsed_time, 1-(err_norm/tl.norm(X)))
-            global_rt = -1
-            global_fit = 1 - (err_norm/tl.norm(X))
-            fitness.append(global_fit)
-            running_time.append(elapsed_time)
+            for i, X_new in enumerate(X_stream[1:]):
+                
+                X_old = tl.concatenate((X_old, X_new))
+                length = X_new.shape[0]
+                
+                start = time.time()
+                (weights, factors) = parafac(X_old, rank, init='random')
+                X_est = construct_tensor(factors)
+                
+                elapsed_time = time.time()-start
+                err_norm = tl.norm(X_est[-length:] - X_old[-length:])
+                print('{}th_iter:'.format(i+1), elapsed_time, 1-err_norm/tl.norm(X_old[-length:]))
+                verbose_list.append([i+1, elapsed_time, err_norm, 0])
+                fitness.append(1-err_norm/tl.norm(X_old[-length:]))
+                running_time.append(elapsed_time)
             
             verbose_list = np.asarray(verbose_list, dtype=float)
             fitness = np.asarray(fitness, dtype=float)
@@ -404,6 +399,13 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             
             local_fit = np.mean(fitness)
             local_rt = np.mean(running_time)
+            mem_usage = sys.getsizeof(X)
+            (weights, factors) = parafac(X, rank, init='random')
+            mem_usage += sys.getsizeof(factors)
+            X_est = construct_tensor(factors)
+            err_norm = tl.norm(X - X_est)
+            global_rt = np.sum(running_time)
+            global_fit = 1 - (err_norm/tl.norm(X))
             print('global fitness', global_fit)
             print('local fitness', local_fit)
             print('global running time', global_rt)

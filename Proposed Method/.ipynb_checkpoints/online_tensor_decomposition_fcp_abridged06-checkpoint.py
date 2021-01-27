@@ -374,36 +374,45 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
         
         if method == 'fcp':
             
-            for i, X_new in enumerate(X_stream[1:]):
+            start = time.time()
+            (weights, factors) = parafac(X_old, rank, init='random')
+            X_est = construct_tensor(factors)
+
+            elapsed_time = time.time()-start
+            err_norm = tl.norm(X_est - X_old)
+            print('0th_iter:', elapsed_time, 1-(err_norm/tl.norm(X_old)))
+            verbose_list.append([i+1, elapsed_time, err_norm, 0])
+            running_time.append(elapsed_time)
+            
+            start = time.time()
+            mem_usage = sys.getsizeof(X)
+            (weights, factors) = parafac(X, rank, init='random')
+            elapsed_time = time.time()-start
+            mem_usage += sys.getsizeof(factors)
+            X_est = construct_tensor(factors)
+            err_norm = tl.norm(X - X_est)
+            print('-1th_iter:', elapsed_time, 1-(err_norm/tl.norm(X)))
+            global_rt = -1
+            global_fit = 1 - (err_norm/tl.norm(X))
+            running_time.append(elapsed_time)
+            
+            srt_point = 0
+            for i, X_new in enumerate(X_stream):
+                length = X_new.shape[0]
+                end_point = srt_point + length
                 
-                start = time.time()
-                (weights, factors) = parafac(X_old, rank, init='random')
-                X_est = construct_tensor(factors)
-                
-                elapsed_time = time.time()-start
-                err_norm = tl.norm(X_est - X_old)
-                print('{}th_iter:'.format(i+1), elapsed_time, err_norm/tl.norm(X_old))
-                verbose_list.append([i+1, elapsed_time, err_norm, 0])
-                fitness.append(err_norm/tl.norm(X_old))
-                running_time.append(elapsed_time)
-                X_old = tl.concatenate((X_old, X_new))
+                err_norm = tl.norm(X_est[srt_point:end_point] - X[srt_point:end_point])
+                fitness.append(1-err_norm/tl.norm(X[srt_point:end_point]))
+                srt_point = end_point
             
             verbose_list = np.asarray(verbose_list, dtype=float)
             fitness = np.asarray(fitness, dtype=float)
             running_time = np.asarray(running_time, dtype=float)
             
-            local_fit = 1 - np.mean(fitness)
+            local_fit = np.mean(fitness)
             local_rt = np.mean(running_time)
-            mem_usage = sys.getsizeof(X)
-            (weights, factors) = parafac(X, rank, init='random')
-            mem_usage += sys.getsizeof(factors)
-            X_est = construct_tensor(factors)
-            err_norm = tl.norm(X - X_est)
-            global_rt = np.sum(running_time)
-            global_fit = 1 - (err_norm/tl.norm(X))
             print('global fitness', global_fit)
             print('local fitness', local_fit)
-            print('global running time', global_rt)
             print('local running time', local_rt)
             print('memory usage', mem_usage)
             results[method] = [global_fit, local_fit, global_rt, local_rt, mem_usage, verbose_list, (split_points, refine_points), X_est]
@@ -436,6 +445,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
         
         iter_mem_usage = 0
         for i, X_new in enumerate(X_stream[1:]):
+            t1 = 0
             i_mem = sys.getsizeof(X_new)
             start = time.time()
             if method == 'dao':
@@ -464,6 +474,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
 
                 (weights, factors0) = parafac(X_old, rank, init='random')
                 elapsed_time = time.time()-start
+                t1 = elapsed_time
                 #print('making init decomposition result:', time.time()-start)
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
 
@@ -481,12 +492,13 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
                 #print('{}th_iter:'.format(i+1), elapsed_time, err_norm, z_score)
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
                 fitness.append(err_norm/tl.norm(X_new))
-                running_time.append(elapsed_time)
+                running_time.append(elapsed_time+t1)
                 continue
             elif method == 'dao' and ll > 0 and z_score > ll:
                 #print('=== REFINE({}, {}) ==='.format(z_score, err_norm))
                 refine_points.append(i+1)
                 elapsed_time = time.time()-start
+                t1 = elapsed_time
                 verbose_list.append([i+1, elapsed_time, err_norm, z_score])
 
                 ((weights, factors), mem) = adaptive_online_cp(factors, X_old, X_new, rank, n_iter=int(n_iter*(1+z_score)), mu=0.2, verbose=False)
@@ -509,7 +521,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
             #print('{}th_iter:'.format(i+1), elapsed_time, err_norm, z_score)
             verbose_list.append([i+1, elapsed_time, err_norm, z_score])
             fitness.append(err_norm/tl.norm(X_new))
-            running_time.append(elapsed_time)
+            running_time.append(elapsed_time + t1)
             X_old = tl.concatenate((X_old, X_new))
             iter_mem_usage = max(iter_mem_usage, i_mem)
             if verbose:
@@ -541,7 +553,7 @@ def online_tensor_decomposition(dataset, X, X_stream, rank, n_iter=1, ul=-1, ll=
 
             tot_norm = tl.norm(X)
             local_fit = 1 - np.mean(fitness)
-            local_rt = np.mean(running_time)
+            local_rt = np.mean(running_time) + init_time/len(X_stream)
             global_fit = 1 - (global_error_norm / tot_norm)
             print('global fitness', global_fit)
             print('local fitness', local_fit)
